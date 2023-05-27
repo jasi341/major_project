@@ -1,0 +1,36 @@
+name: major_project
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_native_splash: ^2.3.0
+  google_fonts: ^4.0.2
+  fluttertoast: ^8.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter_native_splash:
+    color: "#0D2329"
+    image: assets/images/logo.png
+    android_12:
+      image: assets/images/logo.png
+      color: "#0D2329"
+
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+
