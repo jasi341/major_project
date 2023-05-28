@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 500),(){
+    Future.delayed(const Duration(milliseconds: 500),(){
       setState(() {
         _isAnimate = true;
       });

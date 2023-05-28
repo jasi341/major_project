@@ -1,7 +1,12 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:major_project/screens/home_screen.dart';
 import '../../main.dart';
 import 'forgotpassword.dart';
 import 'signup.dart';
@@ -20,6 +25,35 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+  _handleGoogleBtnClick(){
+    _signInWithGoogle().then((user){
+      log('\nUser : ${user.user}');
+      log('\nUserAdditionalInfo:${user.additionalUserInfo}');
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen())
+      );
+
+    });
+  }
+
+  Future<UserCredential> _signInWithGoogle() async{
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
 
 
@@ -182,16 +216,16 @@ class _LoginState extends State<Login> {
               padding: const EdgeInsets.only(right: 20.0,left: 20.0,top: 5.0) ,
               child: OutlinedButton(
                 onPressed: () {
-                  // Button onPressed logic
+                  _handleGoogleBtnClick();
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 45),
                   shape: RoundedRectangleBorder(
 
-                    borderRadius: BorderRadius.circular(5.0), // Set the desired border radius
+                    borderRadius: BorderRadius.circular(5.0),
                   ),
-                  side: const BorderSide(color: Colors.grey), // Set the border color
+                  side: const BorderSide(color: Colors.grey),
                 ),
                 child:Row(
                   mainAxisAlignment: MainAxisAlignment.center,
