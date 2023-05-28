@@ -13,6 +13,10 @@ dependencies:
   flutter_native_splash: ^2.3.0
   google_fonts: ^4.0.2
   fluttertoast: ^8.2.2
+  url_launcher: ^6.1.11
+  firebase_core: ^2.10.0
+  firebase_auth: ^4.4.2
+  lottie: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -32,5 +36,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/animation/
 
 

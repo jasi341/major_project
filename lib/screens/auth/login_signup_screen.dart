@@ -12,6 +12,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  bool _isAnimate = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 500),(){
+      setState(() {
+        _isAnimate = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
@@ -24,10 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: Stack(
         children: [
-          Positioned(
+          AnimatedPositioned(
               top: mq.height * 0.15,
-              width: mq.width * 0.6,
-              left: mq.width*0.20,
+              width: mq.width * 0.5,
+              left:_isAnimate? mq.width*0.25: mq.width*0.5,
+              duration: const Duration(seconds: 2),
               child: Image.asset('assets/images/ic.png')
           ),
           Positioned(

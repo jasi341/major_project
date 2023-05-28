@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/screens/auth/login.dart';
+import 'package:major_project/screens/home_screen.dart';
 import 'package:major_project/screens/tnc/terms_and_conditions.dart';
 import '../../main.dart';
 
@@ -189,7 +190,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15,),
             Padding(
-              padding: const EdgeInsets.only(right: 20.0,left: 20.0,bottom: 10.0) ,
+              padding: const EdgeInsets.only(right: 20.0,left: 20.0,bottom: 5.0) ,
               child: ElevatedButton(
                 onPressed: (){
                   validate();
@@ -207,7 +208,42 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0,left: 20.0,top: 5.0) ,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_)=> const HomeScreen())
+                  );
+                  // Button onPressed logic
+                },
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 45),
+                  shape: RoundedRectangleBorder(
 
+                    borderRadius: BorderRadius.circular(5.0), // Set the desired border radius
+                  ),
+                  side: const BorderSide(color: Colors.grey), // Set the border color
+                ),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/google.png',height: 30,width: 30,),
+                    const SizedBox(width: 10,),
+                    Text(
+                      'SignUp with Google',
+                      style: GoogleFonts.robotoSerif(
+                          fontStyle: FontStyle.normal,
+                          fontSize: 20,
+                          color: Colors.black
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 15,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

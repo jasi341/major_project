@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:major_project/screens/auth/login_signup_screen.dart';
-import 'screens/home_screen.dart';
+import 'package:major_project/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:major_project/screens/splash_screen.dart';
 
 
 late Size mq;
 
 void main() {
+  _initializeFirebase();
   runApp(const MyApp());
 }
 
@@ -19,6 +21,9 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Color(0x1A000080), // Set your desired color here
     ));
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown]);
+
+
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ChatHub",
@@ -31,9 +36,14 @@ class MyApp extends StatelessWidget {
               backgroundColor: const Color(0xB3000080),
           )
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
+}
+_initializeFirebase() async {
+  await Firebase.initializeApp(
+    options :DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 
