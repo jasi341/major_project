@@ -9,6 +9,7 @@ import 'package:major_project/screens/splash_screen.dart';
 late Size mq;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   _initializeFirebase();
   runApp(const MyApp());
 }

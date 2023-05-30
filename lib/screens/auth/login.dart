@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:major_project/nav_anim/login_nav_anim.dart';
+import 'package:major_project/nav_anim/register_nav_anim.dart';
 import 'package:major_project/screens/home_screen.dart';
 import '../../main.dart';
 import 'forgotpassword.dart';
@@ -28,31 +31,53 @@ class _LoginState extends State<Login> {
 
   _handleGoogleBtnClick(){
     _signInWithGoogle().then((user){
-      log('\nUser : ${user.user}');
-      log('\nUserAdditionalInfo:${user.additionalUserInfo}');
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen())
-      );
+      if(user!= null) {
+        log('\nUser : ${user.user}');
+        print(user.user!.displayName!);
+        debugPrint(user.user!.displayName!);
+        log('\nUserAdditionalInfo:${user.additionalUserInfo}');
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomeScreen())
+        );
+      }
 
     });
   }
 
-  Future<UserCredential> _signInWithGoogle() async{
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<UserCredential?> _signInWithGoogle() async{
+    try{
+      await InternetAddress.lookup('google.com');
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    }catch(e){
+      log("\n_signInWithGoogle:$e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          )
+      );
+    }
   }
 
 
@@ -176,7 +201,7 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ForgotPassword()),
+                        LoginNavAnim(builder: (context) => const ForgotPassword()),
                       );
                     },
                     child: Text(
@@ -260,7 +285,7 @@ class _LoginState extends State<Login> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SignUp()),
+                      RegisterNavAnim(builder: (context) => const SignUp()),
                     );
                   },
                   child: Text(

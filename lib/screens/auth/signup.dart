@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:major_project/nav_anim/login_nav_anim.dart';
 import 'package:major_project/screens/auth/login.dart';
 import 'package:major_project/screens/home_screen.dart';
 import 'package:major_project/screens/tnc/terms_and_conditions.dart';
@@ -260,7 +261,7 @@ class _SignUpState extends State<SignUp> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Login()),
+                      LoginNavAnim(builder: (context) => const Login()),
                     );
                   },
                   child: Text(

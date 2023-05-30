@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:major_project/screens/chat_with_bot/chatWithBot.dart';
+
+import 'auth/login_signup_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -53,10 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+
                     PopupMenuItem(
                       value: 2,
                       child: Text(
-                        "Logout",
+                        "Chat with bot",
                         style: GoogleFonts.robotoSerif(
                             fontStyle: FontStyle.normal,
                             fontSize: 20
@@ -66,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     PopupMenuItem(
                       value: 3,
                       child: Text(
-                        "Chat with bot",
+                        "Logout",
                         style: GoogleFonts.robotoSerif(
                             fontStyle: FontStyle.normal,
                             fontSize: 20
@@ -80,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       case 1:
                       //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateProfile()));
                         break;
-                      case 2:
+                      case 3:
                         showDialog(
                             context: context,
                             builder: (BuildContext context){
@@ -96,7 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   TextButton(
                                     onPressed: (){
-                                      // Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
+
+                                      _signOut();
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
+
                                       Fluttertoast.showToast(
                                           msg: "Logged out successfully",
                                           toastLength: Toast.LENGTH_SHORT,
@@ -114,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                         );
                         break;
-                        case 3:
+                        case 2:
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ChatWithBot()));
                     }
                   }
@@ -139,4 +147,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     );
   }
+}
+
+void _signOut()async {
+  await FirebaseAuth.instance.signOut();
+  await GoogleSignIn().signOut();
+
+
 }

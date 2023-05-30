@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:major_project/nav_anim/login_nav_anim.dart';
+import 'package:major_project/nav_anim/register_nav_anim.dart';
 import 'package:major_project/screens/auth/signup.dart';
 import '../../main.dart';
 import 'login.dart';
@@ -55,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: (){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>  Login()));
+                        LoginNavAnim(builder: (context) =>  Login()));
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 45),
@@ -72,9 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 15,),
                   ElevatedButton(
                     onPressed: (){
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) =>  const SignUp()));
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>  const SignUp()));
+                          context,
+                          RegisterNavAnim(builder: (context)=>const SignUp())
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 45),

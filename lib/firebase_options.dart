@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '138032647169',
     projectId: 'chathub-7a862',
     storageBucket: 'chathub-7a862.appspot.com',
+    androidClientId: '138032647169-64e21peocio82jmnh1qpvc4mddsmu90c.apps.googleusercontent.com',
+    iosClientId: '138032647169-jhusmbgg1288244akl09hjvbl9lgjvlc.apps.googleusercontent.com',
     iosBundleId: 'com.example.majorProject',
   );
 }
