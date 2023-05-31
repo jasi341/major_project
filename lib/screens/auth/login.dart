@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:major_project/api/apis.dart';
+import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/login_nav_anim.dart';
 import 'package:major_project/nav_anim/register_nav_anim.dart';
 import 'package:major_project/screens/home_screen.dart';
@@ -30,12 +32,13 @@ class _LoginState extends State<Login> {
   final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   _handleGoogleBtnClick(){
+    Dialogs.showProgressBar(
+        context,
+        Colors.blueAccent
+    );
     _signInWithGoogle().then((user){
+      Navigator.pop(context);
       if(user!= null) {
-        log('\nUser : ${user.user}');
-        print(user.user!.displayName!);
-        debugPrint(user.user!.displayName!);
-        log('\nUserAdditionalInfo:${user.additionalUserInfo}');
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const HomeScreen())
@@ -46,6 +49,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<UserCredential?> _signInWithGoogle() async{
+
     try{
       await InternetAddress.lookup('google.com');
       // Trigger the authentication flow
@@ -61,23 +65,18 @@ class _LoginState extends State<Login> {
       );
 
       // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      return await APIs.auth.signInWithCredential(credential);
     }catch(e){
       log("\n_signInWithGoogle:$e");
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            duration: const Duration(seconds: 3),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          )
+      Dialogs.showSnackbar(
+          context,
+          'Something went wrong!',
+          Colors.red,
+          SnackBarBehavior.floating,
+          Colors.white
       );
     }
+    return null;
   }
 
 
@@ -309,7 +308,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void validate() {
+  Future<void> validate() async {
 
     if(_emailController.text.trim().isEmpty){
       Fluttertoast.showToast(
@@ -361,15 +360,44 @@ class _LoginState extends State<Login> {
 
     }
     else{
-      Fluttertoast.showToast(
-        msg: "Login Successful",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.greenAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      Dialogs.showProgressBar(context, Colors.lightGreen);
+      try{
+
+        final email =_emailController.text.trim();
+        final password = _passwordController.text;
+        await APIs.auth.signInWithEmailAndPassword(email: email, password: password);
+        Navigator.pop(context);
+        Navigator.pushReplacement(context,
+            LoginNavAnim(builder: (context) => const HomeScreen()));
+
+
+
+      }on FirebaseAuthException catch(e){
+        if(e.code == 'user-not-found'){
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "No user found for that email",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+        else if(e.code == 'wrong-password'){
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "Wrong password provided for that user",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      }
     }
   }
 }

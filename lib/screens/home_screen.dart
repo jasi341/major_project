@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:major_project/api/apis.dart';
 import 'package:major_project/screens/chat_with_bot/chatWithBot.dart';
 
 import 'auth/login_signup_screen.dart';
@@ -150,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 void _signOut()async {
-  await FirebaseAuth.instance.signOut();
+  await APIs.auth.signOut();
   await GoogleSignIn().signOut();
 
 

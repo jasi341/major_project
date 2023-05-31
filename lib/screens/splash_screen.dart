@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:major_project/api/apis.dart';
+import 'package:major_project/screens/home_screen.dart';
 
 import 'auth/login_signup_screen.dart';
 
@@ -23,9 +27,20 @@ class _SplashScreenState extends State<SplashScreen> {
         _isTextAnimated = true;
       });
     });
+
     Future.delayed(const Duration(seconds: 2),(){
-      Navigator.pushReplacement
-        (context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+
+      if(APIs.auth.currentUser != null){
+        log('\n sPLASH :${APIs.auth.currentUser}');
+        Navigator.pushReplacement
+          (context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+      }
+
+      else{
+        Navigator.pushReplacement
+          (context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+      }
+
 
     });
   }
