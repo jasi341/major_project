@@ -1,11 +1,17 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/nav_anim/login_nav_anim.dart';
+import 'package:major_project/nav_anim/register_nav_anim.dart';
 import 'package:major_project/screens/auth/login.dart';
-import 'package:major_project/screens/home_screen.dart';
 import 'package:major_project/screens/tnc/terms_and_conditions.dart';
+import 'package:major_project/screens/user_profile.dart';
+import '../../api/apis.dart';
+import '../../helper/dialogs.dart';
 import '../../main.dart';
 
 class SignUp extends StatefulWidget {
@@ -209,42 +215,6 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 20.0,left: 20.0,top: 5.0) ,
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_)=> const HomeScreen())
-                  );
-                  // Button onPressed logic
-                },
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 45),
-                  shape: RoundedRectangleBorder(
-
-                    borderRadius: BorderRadius.circular(5.0), // Set the desired border radius
-                  ),
-                  side: const BorderSide(color: Colors.grey), // Set the border color
-                ),
-                child:Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/google.png',height: 30,width: 30,),
-                    const SizedBox(width: 10,),
-                    Text(
-                      'SignUp with Google',
-                      style: GoogleFonts.robotoSerif(
-                          fontStyle: FontStyle.normal,
-                          fontSize: 20,
-                          color: Colors.black
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
             const SizedBox(height: 15,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -285,7 +255,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void validate() {
+  Future<void> validate() async {
     if(_nameController.text.trim().isEmpty){
       Fluttertoast.showToast(
         msg: "Name cannot be empty",
@@ -347,15 +317,72 @@ class _SignUpState extends State<SignUp> {
 
     }
     else{
-      Fluttertoast.showToast(
-        msg: "Login Successful",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.greenAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      Dialogs.showProgressBar(context, Colors.lightGreen);
+      try{
+
+        final email =_emailController.text.trim();
+        final password = _passwordController.text;
+        await APIs.auth.createUserWithEmailAndPassword(email: email, password: password);
+        await APIs.auth.currentUser!.updateDisplayName(_nameController.text);
+
+        if(mounted) {
+          log('user name ${_nameController.text}');
+          log('${APIs.auth.currentUser}');
+
+
+
+          Fluttertoast.showToast(
+            msg: "User info ${APIs.auth.currentUser}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+          Navigator.pop(context);
+          Navigator.pushReplacement(context,
+              RegisterNavAnim(builder: (context) => const UserProfile()));
+        }
+
+      }on FirebaseAuthException catch(e){
+        if(e.code == 'email-already-in-use'){
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "Email already in use",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+        else if(e.code == 'email-already-in-use'){
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "Wrong password provided for that user",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+        else {
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      }
     }
   }
 }

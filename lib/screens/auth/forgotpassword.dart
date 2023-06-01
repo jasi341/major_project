@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:major_project/api/apis.dart';
+import 'package:major_project/helper/dialogs.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
@@ -54,6 +56,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             right: 20,
             child: TextField(
               controller: _emailController,
+              onSubmitted: (value){
+                validateAndSave();
+              },
               style: GoogleFonts.robotoSerif(color: Colors.black54),
               cursorColor: Colors.blue,
               keyboardType: TextInputType.emailAddress,
@@ -128,13 +133,21 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       );
     }
     else{
-      Fluttertoast.showToast(
-        msg: "Reset link sent to your email",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        fontSize: 16.0,
-      );
+      APIs.auth.sendPasswordResetEmail(email: _emailController.text.trim());
+      Dialogs.showProgressBar(context, Colors.blue);
+
+
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+          msg: "Reset link sent to your email",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0,
+        );
+      });
+
 
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pop(context);

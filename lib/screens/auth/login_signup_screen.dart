@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: (){
                       Navigator.push(
                         context,
-                        LoginNavAnim(builder: (context) =>  Login()));
+                        LoginNavAnim(builder: (context) =>  const Login()));
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 45),

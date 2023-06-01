@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:major_project/api/apis.dart';
+import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/screens/chat_with_bot/chatWithBot.dart';
 
 import 'auth/login_signup_screen.dart';
@@ -105,16 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                       _signOut();
                                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-
-                                      Fluttertoast.showToast(
-                                          msg: "Logged out successfully",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0
-                                      );
+                                      Dialogs.showSnackbar(context, "Logged out successfully", Colors.white70, SnackBarBehavior.floating, Colors.black);
                                     },
                                     child: const Text("Yes"),
                                   ),

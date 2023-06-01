@@ -366,11 +366,12 @@ class _LoginState extends State<Login> {
         final email =_emailController.text.trim();
         final password = _passwordController.text;
         await APIs.auth.signInWithEmailAndPassword(email: email, password: password);
-        Navigator.pop(context);
-        Navigator.pushReplacement(context,
-            LoginNavAnim(builder: (context) => const HomeScreen()));
 
-
+        if(mounted) {
+          Navigator.pop(context);
+          Navigator.pushReplacement(context,
+              LoginNavAnim(builder: (context) => const HomeScreen()));
+        }
 
       }on FirebaseAuthException catch(e){
         if(e.code == 'user-not-found'){
