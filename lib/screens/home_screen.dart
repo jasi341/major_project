@@ -1,45 +1,65 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 import 'package:major_project/api/apis.dart';
+import 'package:major_project/data/User.dart';
 import 'package:major_project/helper/dialogs.dart';
+import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
 import 'package:major_project/screens/chat_with_bot/chatWithBot.dart';
-
+import 'package:major_project/screens/user_profile.dart';
+import '../api/firestore_utils.dart';
 import 'auth/login_signup_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+
+
+  const HomeScreen({Key? key,}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>  {
+
+
+
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    DateTime now = DateTime.now();
+    String formattedTime = DateFormat('hh:mm a').format(now);
+
+    return Scaffold(
       backgroundColor: Colors.white,
       appBar:
       AppBar(
         //on clicking user will be redirected to home screen
-        leading: Center(child: IconButton(onPressed: (){},icon: const Icon(CupertinoIcons.home),)),
+        leading: Center(child: IconButton(
+          onPressed: () {}, icon: const Icon(CupertinoIcons.home),)),
         title: const Text('ChatHub'),
         actions: [
           // search user button
-          Center(child: IconButton(onPressed: (){}, icon: const Icon(Icons.search))),
+          Center(child: IconButton(
+              onPressed: () {}, icon: const Icon(Icons.search))),
           // more options button
           Center(
             child: IconButton(
               onPressed: () {
-                final RenderBox button = context.findRenderObject() as RenderBox;
-                final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+                final RenderBox button = context
+                    .findRenderObject() as RenderBox;
+                final RenderBox overlay = Overlay
+                    .of(context)
+                    .context
+                    .findRenderObject() as RenderBox;
                 final RelativeRect position = RelativeRect.fromRect(
                   Rect.fromPoints(
-                    button.localToGlobal(button.size.topRight(Offset.zero), ancestor: overlay),
-                    button.localToGlobal(button.size.topRight(Offset.zero), ancestor: overlay),
+                    button.localToGlobal(
+                        button.size.topRight(Offset.zero), ancestor: overlay),
+                    button.localToGlobal(
+                        button.size.topRight(Offset.zero), ancestor: overlay),
                   ),
                   Offset.zero & overlay.size,
                 );
@@ -85,28 +105,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (value != null) {
                     switch (value) {
                       case 1:
-                      //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateProfile()));
+                        Navigator.push(context, UserprofileNavAnim(builder: (
+                            context) => ProfileScreen()));
                         break;
                       case 3:
                         showDialog(
                             context: context,
-                            builder: (BuildContext context){
+                            builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text("Logout"),
-                                content: const Text("Are you sure you want to logout?"),
+                                content: const Text(
+                                    "Are you sure you want to logout?"),
                                 actions: [
                                   TextButton(
-                                    onPressed: (){
+                                    onPressed: () {
                                       Navigator.pop(context);
                                     },
                                     child: const Text("No"),
                                   ),
                                   TextButton(
-                                    onPressed: (){
-
+                                    onPressed: () {
                                       _signOut();
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-                                      Dialogs.showSnackbar(context, "Logged out successfully", Colors.white70, SnackBarBehavior.floating, Colors.black);
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (
+                                              context) => const LoginScreen()));
+                                      Dialogs.showSnackbar(
+                                          context, "Logged out successfully",
+                                          Colors.white70,
+                                          SnackBarBehavior.floating,
+                                          Colors.black);
                                     },
                                     child: const Text("Yes"),
                                   ),
@@ -115,8 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                         );
                         break;
-                        case 2:
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ChatWithBot()));
+                      case 2:
+                        Navigator.push(context, MaterialPageRoute(builder: (
+                            context) => const ChatWithBot()));
                     }
                   }
                 }
@@ -130,21 +158,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       //to add new user
-      floatingActionButton:FloatingActionButton(
-        onPressed: (){},
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
         backgroundColor: const Color(0xB3000080),
         splashColor: Colors.blueGrey,
         child: const Icon(Icons.add_comment_rounded,),
 
-      ) ,
+      ),
+
 
     );
   }
-}
-
-void _signOut()async {
-  await APIs.auth.signOut();
-  await GoogleSignIn().signOut();
-
-
+  void _signOut() async {
+    await APIs.auth.signOut();
+    await GoogleSignIn().signOut();
+  }
 }

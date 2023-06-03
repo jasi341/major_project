@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:major_project/api/apis.dart';
+import 'package:major_project/api/firestore_utils.dart';
+import 'package:major_project/data/Collections.dart';
+import 'package:major_project/data/User.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/login_nav_anim.dart';
 import 'package:major_project/nav_anim/register_nav_anim.dart';
@@ -39,9 +41,17 @@ class _LoginState extends State<Login> {
     _signInWithGoogle().then((user){
       Navigator.pop(context);
       if(user!= null) {
+        log("Login ${APIs.auth.currentUser.toString()}");
+        UserDetails userDetails = UserDetails(
+            name: APIs.auth.currentUser!.displayName!,
+            email: APIs.auth.currentUser!.email!,
+            profilePic: APIs.auth.currentUser!.photoURL!,
+            uid: APIs.auth.currentUser!.uid,
+        );
+        FireStoreUtils.uploadUserInfo(userDetails,CollectionsConst.userCollection);
         Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const HomeScreen())
+            MaterialPageRoute(builder: (_) =>  const HomeScreen())
         );
       }
 
@@ -65,12 +75,13 @@ class _LoginState extends State<Login> {
       );
 
       // Once signed in, return the UserCredential
+
       return await APIs.auth.signInWithCredential(credential);
     }catch(e){
       log("\n_signInWithGoogle:$e");
       Dialogs.showSnackbar(
           context,
-          'Something went wrong!',
+          e.toString(),
           Colors.red,
           SnackBarBehavior.floating,
           Colors.white
@@ -241,6 +252,7 @@ class _LoginState extends State<Login> {
               child: OutlinedButton(
                 onPressed: () {
                   _handleGoogleBtnClick();
+
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -370,7 +382,7 @@ class _LoginState extends State<Login> {
         if(mounted) {
           Navigator.pop(context);
           Navigator.pushReplacement(context,
-              LoginNavAnim(builder: (context) => const HomeScreen()));
+              LoginNavAnim(builder: (context) =>  const HomeScreen()));
         }
 
       }on FirebaseAuthException catch(e){

@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/nav_anim/login_nav_anim.dart';
 import 'package:major_project/nav_anim/register_nav_anim.dart';
+import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
 import 'package:major_project/screens/auth/login.dart';
 import 'package:major_project/screens/tnc/terms_and_conditions.dart';
 import 'package:major_project/screens/user_profile.dart';
@@ -325,24 +326,25 @@ class _SignUpState extends State<SignUp> {
         await APIs.auth.createUserWithEmailAndPassword(email: email, password: password);
         await APIs.auth.currentUser!.updateDisplayName(_nameController.text);
 
+       //ASSIGN THE PHOTO URL AS NULL
+        await APIs.auth.currentUser!.updatePhotoURL(null);
+
         if(mounted) {
           log('user name ${_nameController.text}');
           log('${APIs.auth.currentUser}');
 
 
-
           Fluttertoast.showToast(
-            msg: "User info ${APIs.auth.currentUser}",
+            msg: "User info ${APIs.auth.currentUser?.displayName}",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.redAccent,
             textColor: Colors.white,
             fontSize: 16.0,
           );
           Navigator.pop(context);
           Navigator.pushReplacement(context,
-              RegisterNavAnim(builder: (context) => const UserProfile()));
+              UserprofileNavAnim( builder: (context) =>  ProfileScreen()));
         }
 
       }on FirebaseAuthException catch(e){
@@ -358,18 +360,7 @@ class _SignUpState extends State<SignUp> {
             fontSize: 16.0,
           );
         }
-        else if(e.code == 'email-already-in-use'){
-          Navigator.pop(context);
-          Fluttertoast.showToast(
-            msg: "Wrong password provided for that user",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.redAccent,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-        }
+
         else {
           Navigator.pop(context);
           Fluttertoast.showToast(

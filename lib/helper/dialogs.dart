@@ -29,6 +29,7 @@ class Dialogs{
       )
   {
     showDialog(
+      barrierDismissible: false,
         context: context,
         builder: (BuildContext context){
           return  Center(
