@@ -36,7 +36,8 @@ class _LoginState extends State<Login> {
   _handleGoogleBtnClick(){
     Dialogs.showProgressBar(
         context,
-        Colors.blueAccent
+        Colors.blueAccent,
+        "Logging in...",
     );
     _signInWithGoogle().then((user){
       Navigator.pop(context);
@@ -46,7 +47,6 @@ class _LoginState extends State<Login> {
             name: APIs.auth.currentUser!.displayName!,
             email: APIs.auth.currentUser!.email!,
             profilePic: APIs.auth.currentUser!.photoURL!,
-            uid: APIs.auth.currentUser!.uid,
         );
         FireStoreUtils.uploadUserInfo(userDetails,CollectionsConst.userCollection);
         Navigator.pushReplacement(
@@ -372,7 +372,7 @@ class _LoginState extends State<Login> {
 
     }
     else{
-      Dialogs.showProgressBar(context, Colors.lightGreen);
+      Dialogs.showProgressBar(context, Colors.lightGreen, "Logging in");
       try{
 
         final email =_emailController.text.trim();

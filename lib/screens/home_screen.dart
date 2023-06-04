@@ -1,16 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:major_project/api/apis.dart';
-import 'package:major_project/data/User.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
 import 'package:major_project/screens/chat_with_bot/chatWithBot.dart';
-import 'package:major_project/screens/user_profile.dart';
-import '../api/firestore_utils.dart';
+import 'package:major_project/screens/update_profile_screen.dart';
 import 'auth/login_signup_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -106,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen>  {
                     switch (value) {
                       case 1:
                         Navigator.push(context, UserprofileNavAnim(builder: (
-                            context) => ProfileScreen()));
+                            context) =>  UpdateProfileScreen()));
                         break;
                       case 3:
                         showDialog(

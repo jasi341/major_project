@@ -8,11 +8,12 @@ import 'package:major_project/screens/splash_screen.dart';
 
 late Size mq;
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  _initializeFirebase();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -40,11 +41,6 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
     );
   }
-}
-_initializeFirebase() async {
-  await Firebase.initializeApp(
-    options :DefaultFirebaseOptions.currentPlatform,
-  );
 }
 
 

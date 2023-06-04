@@ -1,20 +1,26 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:major_project/helper/dialogs.dart';
 import '../api/apis.dart';
-import '../data/User.dart';
-import '../helper/dialogs.dart';
+import '../data/Collections.dart';
 
-class ProfileScreen extends StatefulWidget {
+
+class UpdateProfileScreen extends StatefulWidget {
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _UpdateProfileScreenState createState() => _UpdateProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+  final _nameFocusNode = FocusNode();
   File? _image;
+  String? newImageUrl;
+  String? savedImage;
+  String? imageUrl;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
@@ -26,26 +32,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _image = File(pickedImage.path);
       });
+
+      String filename = DateTime.now().millisecondsSinceEpoch.toString(); // Generate a unique filename
+      Reference ref = FirebaseStorage.instance.ref().child('profile_images').child(filename);
+      UploadTask uploadTask = ref.putFile(_image!);
+      TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() => null);
+      imageUrl = await storageSnapshot.ref.getDownloadURL();
+      newImageUrl= await storageSnapshot.ref.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection(CollectionsConst.userCollection)
+          .doc(APIs.auth.currentUser!.uid)
+          .update({'profilePic': newImageUrl,'name': _nameController.text});
+
+
     }
   }
 
   @override
+  void initState() {
+    savedImage = APIs.auth.currentUser!.photoURL;
+    _nameController.text = APIs.auth.currentUser!.displayName!;
+    _emailController.text = APIs.auth.currentUser!.email!;
+    print("Uid in update profile screen: ${APIs.auth.currentUser!.uid}");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var imgUrl = APIs.auth.currentUser!.photoURL;
-    var email = APIs.auth.currentUser!.email;
-    var name = APIs.auth.currentUser!.displayName;
-
-    _emailController.text = email!;
-    _nameController.text = name!;
-
     return Scaffold(
       backgroundColor: Colors.blue[900],
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Update Profile'),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top:15.0),
+          padding: const EdgeInsets.only(top: 15.0),
           child: Column(
             children: [
               Center(
@@ -106,9 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           image: DecorationImage(
                             image: _image != null
                                 ? FileImage(_image!)
-                                : imgUrl != null
-                                ? NetworkImage(imgUrl) as ImageProvider<Object>
-                                : const AssetImage('assets/images/profile.png'),
+                                : NetworkImage(APIs.auth.currentUser!.photoURL!) as ImageProvider,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -120,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: const EdgeInsets.all(4),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.blue,
+                            color: Colors.green,
                           ),
                           child: const Padding(
                             padding: EdgeInsets.all(2.0),
@@ -171,6 +191,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: TextField(
                   maxLines: 1,
                   controller: _nameController,
+                  focusNode: _nameFocusNode,
+                  onSubmitted: (value) {
+                    _validateAndSubmit();
+
+                  },
                   style: GoogleFonts.robotoSerif(color: Colors.white),
                   cursorColor: Colors.white,
                   keyboardType: TextInputType.name,
@@ -193,54 +218,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
                 child: ElevatedButton(
                   onPressed: () async {
+                    _validateAndSubmit();
 
-
-                    Dialogs.showProgressBar(context, Colors.blueGrey);
-
-                    if(APIs.auth.currentUser!= null){
-                      UserDetails user = UserDetails(
-                        name: _nameController.text,
-                        email: APIs.auth.currentUser!.email!,
-                        profilePic: APIs.auth.currentUser!.photoURL!,
-                        uid: APIs.auth.currentUser!.uid,
-                      );
-                      await APIs.auth.currentUser!.updateDisplayName(_nameController.text);
-                      await APIs.auth.currentUser!.updatePhotoURL(imgUrl);
-
-
-                    }
                   },
                   style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 45),
-                      backgroundColor:Colors.blue
+                    minimumSize: const Size(double.infinity, 45),
+                    backgroundColor: Colors.blue,
                   ),
-                  child:  Text(
-                    'Continue',
+                  child: Text(
+                    'Save Changes',
                     style: GoogleFonts.robotoSerif(
-                        fontStyle: FontStyle.normal,
-                        fontSize: 20
+                      fontStyle: FontStyle.normal,
+                      fontSize: 20,
                     ),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
                 child: ElevatedButton(
-                  onPressed: (){
+                  onPressed: () {
                     _removeImage();
                   },
                   style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 45),
-                      backgroundColor:Colors.red
+                    minimumSize: const Size(double.infinity, 45),
+                    backgroundColor: Colors.red,
                   ),
                   child:  Text(
-                    'Remove Image',
+                    'Discard Changes',
                     style: GoogleFonts.robotoSerif(
-                        fontStyle: FontStyle.normal,
-                        fontSize: 20
+                      fontStyle: FontStyle.normal,
+                      fontSize: 20,
                     ),
                   ),
                 ),
@@ -255,6 +266,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _removeImage() {
     setState(() {
       _image = null;
+      _nameController.text = APIs.auth.currentUser!.displayName!;
     });
   }
+
+  Future<void> _validateAndSubmit() async {
+    Dialogs.showProgressBar(context, Colors.orange, "Updating Profile...");
+
+    try {
+      await APIs.auth.currentUser!.updateDisplayName(_nameController.text);
+      await APIs.auth.currentUser!.updatePhotoURL(newImageUrl);
+
+      setState(() {
+        savedImage = imageUrl;
+      });
+
+      await FirebaseFirestore.instance
+          .collection(CollectionsConst.userCollection)
+          .doc(APIs.auth.currentUser!.uid)
+          .update({'name': _nameController.text, 'profilePic': newImageUrl});
+
+      Fluttertoast.showToast(
+        msg: "Data updated successfully!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      if(mounted){
+        Navigator.pop(context);
+        _nameFocusNode.unfocus();
+      }
+
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Something went wrong!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
 }
+
+

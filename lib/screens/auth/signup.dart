@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/nav_anim/login_nav_anim.dart';
-import 'package:major_project/nav_anim/register_nav_anim.dart';
 import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
 import 'package:major_project/screens/auth/login.dart';
 import 'package:major_project/screens/tnc/terms_and_conditions.dart';
-import 'package:major_project/screens/user_profile.dart';
+import 'package:major_project/screens/register_user_profile.dart';
 import '../../api/apis.dart';
 import '../../helper/dialogs.dart';
 import '../../main.dart';
@@ -25,9 +23,10 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
 
   bool _obscureText = true;
+  bool _obscureTextConfirm = true;
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
-  final _nameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
 
 
@@ -35,8 +34,6 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
-
-    //make the status bar transparent
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -79,32 +76,6 @@ class _SignUpState extends State<SignUp> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextField(
-                controller: _nameController,
-                style: GoogleFonts.robotoSerif(color: Colors.white),
-                cursorColor: Colors.white,
-                keyboardType: TextInputType.name,
-                maxLines: 1,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  prefixIcon: const Icon(Icons.person,color: Colors.white,),
-                  labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
-                  border:  const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: TextField(
                 maxLines: 1,
                 controller: _emailController,
                 style: GoogleFonts.robotoSerif(color: Colors.white),
@@ -133,13 +104,10 @@ class _SignUpState extends State<SignUp> {
               child: TextField(
                 controller: _passwordController,
                 maxLines: 1,
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.next,
                 style: GoogleFonts.robotoSerif(color: Colors.white),
                 cursorColor: Colors.white,
                 obscureText: _obscureText,
-                onSubmitted: (value) {
-                  validate();
-                },
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock,color: Colors.white,),
@@ -168,6 +136,46 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             const SizedBox(height: 10,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: TextField(
+                controller: _confirmPasswordController,
+                maxLines: 1,
+                textInputAction: TextInputAction.done,
+                style: GoogleFonts.robotoSerif(color: Colors.white),
+                cursorColor: Colors.white,
+                obscureText: _obscureTextConfirm,
+                onSubmitted: (value) {
+                  validate();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  prefixIcon: const Icon(Icons.lock,color: Colors.white,),
+                  suffixIcon: GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          _obscureTextConfirm = !_obscureTextConfirm;
+                        });
+                      },
+                      child: Icon(
+                        _obscureTextConfirm ? Icons.visibility : Icons.visibility_off,color: Colors.white,size: 30,
+                      )
+                  ),
+                  labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
+                  border:  const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+
+                ),
+              ),
+            ),
+            const SizedBox(height: 15,),
             const SizedBox(height: 15,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -257,18 +265,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   Future<void> validate() async {
-    if(_nameController.text.trim().isEmpty){
-      Fluttertoast.showToast(
-        msg: "Name cannot be empty",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-    else if(_emailController.text.trim().isEmpty){
+     if(_emailController.text.trim().isEmpty){
       Fluttertoast.showToast(
         msg: "Email cannot be empty",
         toastLength: Toast.LENGTH_SHORT,
@@ -290,6 +287,17 @@ class _SignUpState extends State<SignUp> {
         fontSize: 16.0,
       );
     }
+     else if(_confirmPasswordController.text.isEmpty){
+       Fluttertoast.showToast(
+         msg: "Confirm Password is required",
+         toastLength: Toast.LENGTH_SHORT,
+         gravity: ToastGravity.BOTTOM,
+         timeInSecForIosWeb: 1,
+         backgroundColor: Colors.redAccent,
+         textColor: Colors.white,
+         fontSize: 16.0,
+       );
+     }
     else if(_passwordController.text.length<6){
       Fluttertoast.showToast(
         msg: "Password must be at least 6 characters long",
@@ -317,34 +325,33 @@ class _SignUpState extends State<SignUp> {
       );
 
     }
+    else if(_passwordController.text.toString() != _confirmPasswordController.text.toString()) {
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+           content: const Text("Password and Confirm Password must be same"),
+           duration: const Duration(seconds: 3),
+           backgroundColor: Colors.redAccent,
+           behavior: SnackBarBehavior.floating,
+           shape: RoundedRectangleBorder(
+             borderRadius: BorderRadius.circular(5),
+           ),
+           margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+         ),
+       );
+     }
     else{
-      Dialogs.showProgressBar(context, Colors.lightGreen);
+      Dialogs.showProgressBar(context, Colors.lightGreen, "Creating Account");
       try{
 
         final email =_emailController.text.trim();
         final password = _passwordController.text;
         await APIs.auth.createUserWithEmailAndPassword(email: email, password: password);
-        await APIs.auth.currentUser!.updateDisplayName(_nameController.text);
-
-       //ASSIGN THE PHOTO URL AS NULL
-        await APIs.auth.currentUser!.updatePhotoURL(null);
 
         if(mounted) {
-          log('user name ${_nameController.text}');
-          log('${APIs.auth.currentUser}');
-
-
-          Fluttertoast.showToast(
-            msg: "User info ${APIs.auth.currentUser?.displayName}",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
           Navigator.pop(context);
           Navigator.pushReplacement(context,
-              UserprofileNavAnim( builder: (context) =>  ProfileScreen()));
+              UserprofileNavAnim( builder: (context) =>  RegistrationProfileScreen()));
         }
 
       }on FirebaseAuthException catch(e){

@@ -134,7 +134,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     }
     else{
       APIs.auth.sendPasswordResetEmail(email: _emailController.text.trim());
-      Dialogs.showProgressBar(context, Colors.blue);
+      Dialogs.showProgressBar(context, Colors.blue, "Sending reset link");
 
 
       Future.delayed(const Duration(seconds: 3), () {
