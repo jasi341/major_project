@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:major_project/api/apis.dart';
-import 'package:major_project/api/firestore_utils.dart';
 import 'package:major_project/data/Collections.dart';
 import 'package:major_project/data/User.dart';
 import 'package:major_project/helper/dialogs.dart';
@@ -39,20 +38,30 @@ class _LoginState extends State<Login> {
         Colors.blueAccent,
         "Logging in...",
     );
-    _signInWithGoogle().then((user){
+    _signInWithGoogle().then((user) async {
       Navigator.pop(context);
       if(user!= null) {
         log("Login ${APIs.auth.currentUser.toString()}");
-        UserDetails userDetails = UserDetails(
-            name: APIs.auth.currentUser!.displayName!,
-            email: APIs.auth.currentUser!.email!,
-            profilePic: APIs.auth.currentUser!.photoURL!,
-        );
-        FireStoreUtils.uploadUserInfo(userDetails,CollectionsConst.userCollection);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) =>  const HomeScreen())
-        );
+
+        if((await APIs.userExists())){
+          if(mounted) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen())
+            );
+          }
+        }
+        else{
+          APIs.createUser().then((value) {
+            if(mounted) {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen())
+              );
+            }
+          });
+        }
+
       }
 
     });

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   String? imageUrl;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _aboutController = TextEditingController();
 
   Future<void> _getImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -191,6 +193,33 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 child: TextField(
                   maxLines: 1,
                   controller: _nameController,
+                  style: GoogleFonts.robotoSerif(color: Colors.white),
+                  cursorColor: Colors.white,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    prefixIcon: const Icon(Icons.person,color: Colors.white70,),
+                    labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
+                    border:  const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white70),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: TextField(
+                  maxLines: 1,
+                  controller: _aboutController,
                   focusNode: _nameFocusNode,
                   onSubmitted: (value) {
                     _validateAndSubmit();
@@ -201,8 +230,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   keyboardType: TextInputType.name,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    labelText: 'Name',
-                    prefixIcon: const Icon(Icons.person,color: Colors.white70,),
+                    labelText: 'About',
+                    prefixIcon: const Icon(CupertinoIcons.info,color: Colors.white70,),
                     labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
                     border:  const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
