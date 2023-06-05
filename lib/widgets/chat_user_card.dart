@@ -23,7 +23,6 @@ class _ChatUserCardState extends State<ChatUserCard> {
       child: InkWell(
         splashColor: Colors.white.withOpacity(0.7),
         onTap: (){
-          print('img : ${widget.user.image}');
         },
         child: ListTile(
           shape: const RoundedRectangleBorder(

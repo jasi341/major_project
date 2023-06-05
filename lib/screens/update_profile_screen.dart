@@ -56,7 +56,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     savedImage = APIs.auth.currentUser!.photoURL;
     _nameController.text = APIs.auth.currentUser!.displayName!;
     _emailController.text = APIs.auth.currentUser!.email!;
-    print("Uid in update profile screen: ${APIs.auth.currentUser!.uid}");
     super.initState();
   }
 

@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:major_project/api/firestore_utils.dart';
 import 'package:major_project/data/User.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
@@ -25,6 +25,7 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
   String? imageUrl ;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _aboutController = TextEditingController();
 
   Future<void> _getImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -42,7 +43,7 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
       imageUrl = await storageSnapshot.ref.getDownloadURL();
 
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection(CollectionsConst.userCollection)
           .doc(APIs.auth.currentUser!.uid)
           .update({'profileImageUrl': imageUrl});
 
@@ -55,13 +56,6 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
         fontSize: 16.0,
       );
     }
-  }
-
-  @override
-  void initState() {
-    savedImage = APIs.auth.currentUser!.photoURL;
-
-    super.initState();
   }
 
   @override
@@ -227,6 +221,36 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
               ),
               const SizedBox(height: 20),
               Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: TextField(
+                  maxLines: 3,
+                  minLines: 1,
+                  controller: _aboutController,
+                  style: GoogleFonts.robotoSerif(color: Colors.white),
+                  cursorColor: Colors.white,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    _validateAndSubmit();
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'About',
+                    prefixIcon: const Icon(CupertinoIcons.info_circle,color: Colors.white70,),
+                    labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
+                    border:  const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white70),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
                 child: ElevatedButton(
                   onPressed: () async {
@@ -290,14 +314,7 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
         imageUrl = imageUrl;
       });
       try {
-        UserDetails userDetails = UserDetails(
-          name: _nameController.text,
-          email: _emailController.text,
-          profilePic: imageUrl!,
-        );
-
-        FireStoreUtils.uploadUserInfo(
-            userDetails, CollectionsConst.userCollection);
+        APIs.createUser();
 
         if(mounted) {
           Navigator.pop(context);
