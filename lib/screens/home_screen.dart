@@ -26,9 +26,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>  {
 
-   List<ChatUser> list =[];
+  List<ChatUser> list =[];
 
 
+
+  @override
+  void initState() {
+    APIs.getSelfInfo();
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
@@ -107,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen>  {
                       switch (value) {
                         case 1:
                           Navigator.push(context, UserprofileNavAnim(builder: (
-                              context) =>  UpdateProfileScreen()));
+                              context) =>  UpdateProfileScreen(user:APIs.me)));
                           break;
                         case 3:
                           showDialog(
@@ -169,44 +176,44 @@ class _HomeScreenState extends State<HomeScreen>  {
         body:Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: StreamBuilder(
-              stream: APIs.firestore.collection(CollectionsConst.userCollection).snapshots(),
-
+              stream: APIs.getAllUsers(),
               builder: (context,snapshot){
-
                 switch(snapshot.connectionState){
                   case ConnectionState.waiting:
                   case ConnectionState.none:
-                    return const Center(child: Card(child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height:10),
-                        CircularProgressIndicator(),
-                        SizedBox(height:10),
-                        Text('Loading...'),
-                      ],
-                    )));
+                    return
+
+                      const Center(child: Card(child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height:10),
+                          CircularProgressIndicator(),
+                          SizedBox(height:10),
+                          Text('Loading...'),
+                        ],
+                      )
+                      )
+                      );
 
                   case ConnectionState.active:
                   case ConnectionState.done:
-
-
                     final data = snapshot.data?.docs;
-                   list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+                    list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
 
-                   if(list.isNotEmpty){
-                     return ListView.builder(
-                       itemCount:list.length,
-                       physics: const BouncingScrollPhysics(),
-                       itemBuilder: (context,index){
-                         return  ChatUserCard(user:list[index],);
+                    if(list.isNotEmpty){
+                      return ListView.builder(
+                        itemCount:list.length,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context,index){
+                          return  ChatUserCard(user:list[index],);
 
-                       },
+                        },
 
-                     );
+                      );
 
-                   }else{
+                    }else{
                       return  Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -214,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen>  {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               LottieBuilder.asset(
-                                  'assets/animation/no-user.json',
+                                'assets/animation/no-user.json',
                                 repeat: true,
                                 animate: true,
                                 fit: BoxFit.cover,
@@ -224,17 +231,26 @@ class _HomeScreenState extends State<HomeScreen>  {
                               Text('No users found',style: GoogleFonts.acme(fontSize: 22,),),
                             ],
                           ));
-                   }
-
+                    }
                 }
-
               }
           ),
         )
     );
   }
   void _signOut() async {
-    await APIs.auth.signOut();
-    await GoogleSignIn().signOut();
+    Dialogs.showProgressBar(context, Colors.greenAccent, "Logging out...");
+    await APIs.auth.signOut().then((value) async {
+      await GoogleSignIn().signOut().then((value) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
+      });
+
+
+    });
+
   }
 }

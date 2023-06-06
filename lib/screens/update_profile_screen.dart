@@ -1,345 +1,208 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:major_project/helper/dialogs.dart';
-import '../api/apis.dart';
-import '../data/Collections.dart';
-
+import '../data/chat_user.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
+  final ChatUser user;
+
+  const UpdateProfileScreen({super.key, required this.user});
+
   @override
-  _UpdateProfileScreenState createState() => _UpdateProfileScreenState();
+  State<UpdateProfileScreen> createState() => _UpdateProfileScreenState();
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
-  final _nameFocusNode = FocusNode();
-  File? _image;
-  String? newImageUrl;
-  String? savedImage;
-  String? imageUrl;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _aboutController = TextEditingController();
 
-  Future<void> _getImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: source);
+  final _formKey = GlobalKey<FormState>();
 
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
-
-      String filename = DateTime.now().millisecondsSinceEpoch.toString(); // Generate a unique filename
-      Reference ref = FirebaseStorage.instance.ref().child('profile_images').child(filename);
-      UploadTask uploadTask = ref.putFile(_image!);
-      TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() => null);
-      imageUrl = await storageSnapshot.ref.getDownloadURL();
-      newImageUrl= await storageSnapshot.ref.getDownloadURL();
-
-      await FirebaseFirestore.instance
-          .collection(CollectionsConst.userCollection)
-          .doc(APIs.auth.currentUser!.uid)
-          .update({'profilePic': newImageUrl,'name': _nameController.text});
-
-
-    }
-  }
-
-  @override
-  void initState() {
-    savedImage = APIs.auth.currentUser!.photoURL;
-    _nameController.text = APIs.auth.currentUser!.displayName!;
-    _emailController.text = APIs.auth.currentUser!.email!;
-    super.initState();
-  }
+  final _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[900],
-      appBar: AppBar(
-        title: const Text('Update Profile'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: Column(
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return SafeArea(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ListTile(
-                                leading: const Icon(Icons.camera_alt),
-                                title: const Text('Camera'),
-                                onTap: () {
-                                  _getImage(ImageSource.camera);
-                                  Navigator.pop(context);
-                                },
+    _emailController.text = widget.user.email;
+
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+          backgroundColor: Colors.blue[900],
+          appBar: AppBar(
+            title: const Text('Update Profile'),
+          ),
+          body:SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: Column(
+                  children: [
+                    const SizedBox( width: double.infinity,),
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          maxRadius: 75,
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              height: 150,
+                              width: 150,
+                              imageUrl: widget.user.image,
+                              fit: BoxFit.fill,
+                              placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
+                              errorWidget: (context, url, error) =>  CircleAvatar(
+                                child: Image.asset('assets/images/profile.png'),
                               ),
-                              ListTile(
-                                leading: const Icon(Icons.photo_library),
-                                title: const Text('Gallery'),
-                                onTap: () {
-                                  _getImage(ImageSource.gallery);
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 150,
-                        margin: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: Colors.black87,
-                              width: 2,
-                              strokeAlign: BorderSide.strokeAlignOutside,
-                              style: BorderStyle.solid
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.7),
-                              spreadRadius: 5,
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
                             ),
-                          ],
-                          image: DecorationImage(
-                            image: _image != null
-                                ? FileImage(_image!)
-                                : NetworkImage(APIs.auth.currentUser!.photoURL!) as ImageProvider,
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: 5,
-                        right: 5,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.green,
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(2.0),
-                            child: Icon(
-                              Icons.camera_alt,
+                        Positioned(
+                          bottom: 0,
+                          right: -15,
+                          child: MaterialButton(
+                            onPressed: (){},
+                            shape:const CircleBorder(),
+                            color: Colors.blue,
+                            child:const Icon(
+                              Icons.camera_alt_outlined,
                               color: Colors.white,
                             ),
+
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: TextField(
+                        maxLines: 1,
+                        enabled: false,
+                        controller: _emailController,
+                        style: GoogleFonts.robotoSerif(color: Colors.white),
+                        cursorColor: Colors.white,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: const Icon(Icons.email,color: Colors.white,),
+                          labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
+                          border:  const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder:  const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white70),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 50),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextField(
-                  maxLines: 1,
-                  enabled: false,
-                  controller: _emailController,
-                  style: GoogleFonts.robotoSerif(color: Colors.white),
-                  cursorColor: Colors.white,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.email_outlined,color: Colors.white70,),
-                    labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
-                    border:  const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white70),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: TextFormField(
+                        initialValue: widget.user.name,
+                        cursorColor: Colors.white,
+                        textInputAction: TextInputAction.next,
+                        style: GoogleFonts.robotoSerif(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'Name',
+                          hintText: 'Enter your name',
+                          hintStyle: GoogleFonts.robotoSerif(color: Colors.white70),
+                          prefixIcon: const Icon(Icons.person,color: Colors.white,),
+                          labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
+                          border:  const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder:  const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white70),
+                          ),
+                        ),
+                      ),
                     ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white70),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: TextFormField(
+                        initialValue: widget.user.about,
+                        cursorColor: Colors.white,
+                        textInputAction: TextInputAction.done,
+                        style: GoogleFonts.robotoSerif(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'About',
+                          hintText: 'Hey there! I am using ChatHub.',
+                          hintStyle: GoogleFonts.robotoSerif(color: Colors.white70),
+                          prefixIcon: const Icon(CupertinoIcons.info_circle,color: Colors.white,),
+                          labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
+                          border:  const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder:  const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white70),
+                          ),
+                        ),
+                      ),
                     ),
-                    disabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white54),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextField(
-                  maxLines: 1,
-                  controller: _nameController,
-                  style: GoogleFonts.robotoSerif(color: Colors.white),
-                  cursorColor: Colors.white,
-                  keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    prefixIcon: const Icon(Icons.person,color: Colors.white70,),
-                    labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
-                    border:  const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white70),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+                    const SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20.0,left: 20.0,bottom: 5.0) ,
+                      child: ElevatedButton(
+                        onPressed: (){
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: TextField(
-                  maxLines: 1,
-                  controller: _aboutController,
-                  focusNode: _nameFocusNode,
-                  onSubmitted: (value) {
-                    _validateAndSubmit();
-
-                  },
-                  style: GoogleFonts.robotoSerif(color: Colors.white),
-                  cursorColor: Colors.white,
-                  keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    labelText: 'About',
-                    prefixIcon: const Icon(CupertinoIcons.info,color: Colors.white70,),
-                    labelStyle: GoogleFonts.robotoSerif(color: Colors.white),
-                    border:  const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                        },
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 45),
+                            elevation: 10,
+                            shadowColor: Colors.black54,
+                            backgroundColor:Colors.blue
+                        ),
+                        child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.save,color: Colors.white,),
+                            const SizedBox(width: 5,),
+                            Text(
+                              'Update',
+                              style: GoogleFonts.robotoSerif(
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 20
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white70),
-                    ),
-                  ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    _validateAndSubmit();
-
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 45),
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: Text(
-                    'Save Changes',
-                    style: GoogleFonts.robotoSerif(
-                      fontStyle: FontStyle.normal,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _removeImage();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 45),
-                    backgroundColor: Colors.red,
-                  ),
-                  child:  Text(
-                    'Discard Changes',
-                    style: GoogleFonts.robotoSerif(
-                      fontStyle: FontStyle.normal,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          )
       ),
     );
   }
-
-  void _removeImage() {
-    setState(() {
-      _image = null;
-      _nameController.text = APIs.auth.currentUser!.displayName!;
-    });
-  }
-
-  Future<void> _validateAndSubmit() async {
-    Dialogs.showProgressBar(context, Colors.orange, "Updating Profile...");
-
-    try {
-      await APIs.auth.currentUser!.updateDisplayName(_nameController.text);
-      await APIs.auth.currentUser!.updatePhotoURL(newImageUrl);
-
-      setState(() {
-        savedImage = imageUrl;
-      });
-
-      await FirebaseFirestore.instance
-          .collection(CollectionsConst.userCollection)
-          .doc(APIs.auth.currentUser!.uid)
-          .update({'name': _nameController.text, 'profilePic': newImageUrl});
-
-      Fluttertoast.showToast(
-        msg: "Data updated successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-
-      if(mounted){
-        Navigator.pop(context);
-        _nameFocusNode.unfocus();
-      }
-
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Something went wrong!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-  }
 }
+
+
+
 
 
