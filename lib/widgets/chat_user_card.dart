@@ -3,8 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/data/chat_user.dart';
-import 'package:major_project/nav_anim/login_nav_anim.dart';
-
+import '../nav_anim/chat_nav_anim.dart';
 import '../screens/ChatScreen.dart';
 
 class ChatUserCard extends StatefulWidget {
@@ -30,7 +29,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
       child: InkWell(
         splashColor: Colors.black.withOpacity(0.7),
         onTap: (){
-          Navigator.push(context, LoginNavAnim(
+          Navigator.push(context, ChatNavAnim(
             builder: (context) =>  ChatScreen(user:widget.user),
           )
           );

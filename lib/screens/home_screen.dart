@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:major_project/api/apis.dart';
 import 'package:major_project/data/chat_user.dart';
@@ -38,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen>  {
   }
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedTime = DateFormat('hh:mm a').format(now);
 
     return GestureDetector(
       onTap: ()=> FocusScope.of(context).unfocus(),

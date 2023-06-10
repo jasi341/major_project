@@ -6,6 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:major_project/data/chat_user.dart';
 
+import '../api/apis.dart';
+import '../nav_anim/message.dart';
+import '../widgets/message_card.dart';
+
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user ;
@@ -17,6 +21,12 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  final ScrollController _scrollController = ScrollController();
+
+  List<Message> _list = [];
+  final _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
           statusBarColor: Color(0xFF000080),
         ),
         child: Scaffold(
-          backgroundColor: const Color(0xffececec),
+          backgroundColor: const Color(0xfff7ede2),
           appBar: AppBar(
             automaticallyImplyLeading: false,
             flexibleSpace: _appBar(),
@@ -35,63 +45,52 @@ class _ChatScreenState extends State<ChatScreen> {
 
               Expanded(
                 child: StreamBuilder(
-                   // stream: APIs.getAllUsers(),
+                    stream: APIs.getAllMessages(widget.user),
                     builder: (context,snapshot){
                       switch(snapshot.connectionState){
                         case ConnectionState.waiting:
                         case ConnectionState.none:
-                          // return
-                          //
-                          //   const Center(child: Card(child: Padding(
-                          //     padding: EdgeInsets.all(8.0),
-                          //     child: Column(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       crossAxisAlignment: CrossAxisAlignment.center,
-                          //       mainAxisSize: MainAxisSize.min,
-                          //       children: [
-                          //         SizedBox(height:10),
-                          //         SizedBox(width: 50,),
-                          //         CircularProgressIndicator(),
-                          //         SizedBox(height:10),
-                          //         Text('Loading...'),
-                          //       ],
-                          //     ),
-                          //   )
-                          //   )
-                          //   );
-
+                          return const SizedBox();
                         case ConnectionState.active:
                         case ConnectionState.done:
-                          // final data = snapshot.data?.docs;
-                          // _list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-
-                      final _list =[];
+                          final data = snapshot.data?.docs;
+                          _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
                           if(_list.isNotEmpty){
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _scrollToBottom();
+                            });
                             return ListView.builder(
+
+                              controller: _scrollController,
                               itemCount: _list.length,
                               physics: const BouncingScrollPhysics(),
                               itemBuilder: (context,index){
-                                return  Text('Message:${_list[index]}');
+                                return   MessageCard(message: _list[index]);
                               },
                             );
 
                           }else{
-                            return  Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    LottieBuilder.asset(
-                                      'assets/animation/sayhi.json',
-                                      repeat: true,
-                                      animate: true,
-                                      fit: BoxFit.cover,
+                            return  GestureDetector(
+                              onTap: (){
+                                _textController.text = 'Hi';
+                              },
+                              child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      LottieBuilder.asset(
+                                        'assets/animation/sayhi.json',
+                                        repeat: true,
+                                        animate: true,
+                                        fit: BoxFit.cover,
 
-                                    ),
-                                    const SizedBox(height:10),
-                                  ],
-                                )
+                                      ),
+                                      const SizedBox(height:10),
+                                    ],
+                                  )
+                              ),
                             );
                           }
                       }
@@ -171,25 +170,31 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                     icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.blue),
                   ),
-                  Expanded(child: TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    style: GoogleFonts.robotoSerif(
-                        color: Colors.black87 ,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.italic
-                    ),
-                    decoration: InputDecoration(
-                        hintText: 'Type SomeThing...',
-                        hintStyle: GoogleFonts.acme(
-                            color: Colors.grey,
-                            fontSize: 17,
-                            fontWeight: FontWeight.normal
+                  Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        style: GoogleFonts.robotoSerif(
+                            color: Colors.black87 ,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal
                         ),
-                        border: InputBorder.none
-                    ),
-                  )),
+                        onSubmitted: (value){
+                          validateAndSend();
+                        },
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                            hintText: 'Type SomeThing...',
+                            hintStyle: GoogleFonts.acme(
+                                color: Colors.grey,
+                                fontSize: 17,
+                                fontWeight: FontWeight.normal
+                            ),
+                            border: InputBorder.none
+                        ),
+                      )),
                   IconButton(
                     onPressed: () {
                     },
@@ -212,7 +217,9 @@ class _ChatScreenState extends State<ChatScreen> {
               elevation: 2,
               splashColor: Colors.blueGrey,
               padding: const EdgeInsets.all(10),
-              onPressed: (){},
+              onPressed: (){
+             validateAndSend();
+              },
               shape: const CircleBorder(),
               minWidth: 5,
               color: Colors.green,
@@ -223,5 +230,30 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  void validateAndSend() {
+    if(_textController.text.isNotEmpty){
+      APIs.sendMessage(
+          widget.user,
+          _textController.text
+      );
+      _textController.clear();
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please Enter Some Text'),duration: Duration(milliseconds: 1500),));
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 700),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+
 }
 
