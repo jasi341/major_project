@@ -7,8 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:major_project/api/apis.dart';
-import 'package:major_project/data/Collections.dart';
-import 'package:major_project/data/User.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/login_nav_anim.dart';
 import 'package:major_project/nav_anim/register_nav_anim.dart';

@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if(APIs.auth.currentUser != null){
         log('\n sPLASH :${APIs.auth.currentUser}');
         Navigator.pushReplacement
-          (context, MaterialPageRoute(builder: (_) =>  HomeScreen()));
+          (context, MaterialPageRoute(builder: (_) =>  const HomeScreen()));
       }
 
       else{
@@ -50,6 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
+
     ));
 
     return Scaffold(

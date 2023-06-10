@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.5
   flutter_native_splash: ^2.3.0
   google_fonts: ^4.0.2
   fluttertoast: ^8.2.2
@@ -18,7 +18,7 @@ dependencies:
   firebase_core: ^2.10.0
   firebase_auth: ^4.4.2
   google_sign_in: ^6.1.2
-  image_picker: ^0.8.4+4
+  image_picker: ^0.8.7+5
   cloud_firestore: ^4.8.0
   intl: ^0.17.0
   firebase_storage: ^11.2.2
