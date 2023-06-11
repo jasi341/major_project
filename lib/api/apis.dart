@@ -107,9 +107,9 @@ class APIs{
   }
 
   static Future<void> sendMessage(ChatUser chatUser , String msg) async{
-    
+
     final time = DateTime.now().millisecondsSinceEpoch.toString();
-    
+
     final Message message = Message(
         toId: chatUser.id,
         msg: msg,
@@ -122,7 +122,7 @@ class APIs{
     final ref = firestore
         .collection('chats/${getConversationID(chatUser.id)}/messages');
 
-        await ref.doc(time).set(message.toJson());
+    await ref.doc(time).set(message.toJson());
 
 
   }
@@ -136,5 +136,13 @@ class APIs{
           'read':DateTime.now().millisecondsSinceEpoch.toString()
         });
 
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>>  getLastMessages(ChatUser user){
+    return firestore
+        .collection('chats/${getConversationID(user.id)}/messages')
+        .orderBy('sent',descending: true)
+        .limit(1)
+        .snapshots();
   }
 }
