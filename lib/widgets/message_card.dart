@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/api/apis.dart';
 import 'package:major_project/helper/dateUtils.dart';
+import 'package:major_project/widgets/videoplayer_screen.dart';
 import '../data/message.dart';
 import 'package:cached_video_preview/cached_video_preview.dart';
 
@@ -65,52 +66,35 @@ class _MessageCardState extends State<MessageCard> {
                 ),
               )
                   : widget.message.type == Type.video?
-              Stack(
-                alignment: Alignment.center,
-                children: [
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context)=>
+                          VideoPlayerScreen(msg: widget.message.msg,)
+                      )
+                  );
+                },
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width*0.75 ,
+                  height: MediaQuery.of(context).size.height*0.4,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
 
-                  CachedVideoPreviewWidget(
-                    path: widget.message.msg,
-                    type: SourceType.remote,
-                    remoteImageBuilder: (BuildContext context, url) => Image.network(url),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context)=>Scaffold(
-                            backgroundColor: Colors.white70,
-                            appBar: AppBar(
-                              backgroundColor: Colors.blueAccent.shade700,
-                              title: const Text("Video"),
-                            ),
-                            body: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height,
-                                    child:CachedVideoPreviewWidget(
-                                      path: widget.message.msg,
-                                      type: SourceType.remote,
-                                      remoteImageBuilder: (BuildContext context, url) => Image.network(url),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ))
-                      );
-                    },
-                    child: Icon(
-                      Icons.play_circle_fill_rounded,
-                      size: 50,
-                      color: Colors.blueAccent.shade700,
-                    ),
-                  ),
+                      CachedVideoPreviewWidget(
+                        path: widget.message.msg,
+                        type: SourceType.remote,
+                        remoteImageBuilder: (BuildContext context, url) => Image.network(url),
+                      ),
+                      const Icon(
+                        Icons.play_circle_fill_rounded,
+                        size: 60,
+                        color: Colors.white,
+                      ),
 
-                ],
+                    ],
+                  ),
+                ),
               )
 
                   :GestureDetector(
@@ -223,12 +207,36 @@ class _MessageCardState extends State<MessageCard> {
                 ),
               ):
               widget.message.type == Type.video?
-              Center(
-                  child: controller.value.isInitialized
-                      ? AspectRatio(
-                      aspectRatio: controller.value.aspectRatio,
-                      child: CachedVideoPlayer(controller))
-                      : const CircularProgressIndicator()):
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context)=>
+                          VideoPlayerScreen(msg: widget.message.msg,)
+                      )
+                  );
+                },
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width*0.75 ,
+                  height: MediaQuery.of(context).size.height*0.4,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+
+                      CachedVideoPreviewWidget(
+                        path: widget.message.msg,
+                        type: SourceType.remote,
+                        remoteImageBuilder: (BuildContext context, url) => Image.network(url),
+                      ),
+                      const Icon(
+                        Icons.play_circle_fill_rounded,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+
+                    ],
+                  ),
+                ),
+              ):
               GestureDetector(
                 onTap: (){
                   Navigator.push(context,
