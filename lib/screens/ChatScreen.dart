@@ -384,19 +384,21 @@ class _ChatScreenState extends State<ChatScreen> {
                                 final ImagePicker picker = ImagePicker();
                                 final List<XFile> images = await picker.pickMultiImage(imageQuality: 70);
 
-                                for(var i in images){
-                                  //disable the bottom sheet
+                                setState(() {
+                                  _isUploading = true;
+                                });
+                                if(mounted) {
                                   Navigator.pop(context);
-
-                                  setState(() {
-                                    _isUploading = true;
-                                  });
-                                  await APIs.sendChatImage(widget.user,File(i.path));
-                                  setState(() {
-                                    _isUploading = false;
-                                  });
-
                                 }
+                                for(var i in images){
+                                  await APIs.sendChatImage(widget.user,File(i.path)
+                                  );
+                                }
+                                setState(() {
+                                  _isUploading = false;
+                                });
+
+
                               },
                               splashColor: Colors.tealAccent,
                               child: Padding(
@@ -406,9 +408,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.photo,size: 60),
+                                    Image.asset('assets/images/gallery.png',width: 60,height: 60,),
                                     const SizedBox(height:5),
-                                    Text('Gallery',style: GoogleFonts.acme(fontSize: 22,),),
+                                    Text('Photo',style: GoogleFonts.acme(fontSize: 22,),),
                                   ],
                                 ),
                               ),
@@ -428,10 +430,11 @@ class _ChatScreenState extends State<ChatScreen> {
                               onTap: () async {
                                 final ImagePicker picker = ImagePicker();
                                 final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
-                                if(video!= null){
-                                  //disable the bottom sheet
-                                  Navigator.pop(context);
 
+                                if(mounted) {
+                                  Navigator.pop(context);
+                                }
+                                if(video!= null){
                                   setState(() {
                                     _isUploading = true;
                                   });
@@ -450,9 +453,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.video_camera_back_outlined,size: 60,),
+                                    Image.asset('assets/images/video.png',width: 60,height: 60,),
                                     const SizedBox(height:5),
-                                    Text('Gallery',style: GoogleFonts.acme(fontSize: 22,),),
+                                    Text('Video',style: GoogleFonts.acme(fontSize: 22,),),
                                   ],
                                 ),
                               ),

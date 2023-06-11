@@ -14,12 +14,14 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   bool isPlaying = false;
+  bool isVisible = false;
 
   late CachedVideoPlayerController controller;
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: Colors.grey,
         appBar: AppBar(
           title: Text("Video",style: GoogleFonts.acme(
               fontSize: 25,
@@ -27,49 +29,61 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               color: Colors.white
           ),),
         ),
-        body: Stack(
-          alignment: Alignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 2),
-              child: SizedBox(
+        body: GestureDetector(
+          onTap: (){
+            setState(() {
+              isVisible = !isVisible;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
 
-                child: Center(
-                    child: controller.value.isInitialized
-                        ? AspectRatio(
-                        aspectRatio: controller.value.aspectRatio,
-                        child: CachedVideoPlayer(controller))
-                        : const CircularProgressIndicator()),
-              ),
-            ),
-            MaterialButton(
-
-              minWidth: 55,
-              height: 55,
-                onPressed: (){
-                  if(isPlaying){
-                    controller.pause();
-                    setState(() {
-                      isPlaying = false;
-                    });
-                  }else{
-                    controller.play();
-                    setState(() {
-                      isPlaying = true;
-                    });
-
-                  }
-                },
-              shape:const CircleBorder(),
-              color: Colors.white,
-                child: Icon(
-                  isPlaying?
-                  Icons.pause:Icons.play_arrow,
-                  color: Colors.black,
-                  size: 35,
+                  child: Center(
+                      child: controller.value.isInitialized
+                          ? AspectRatio(
+                          aspectRatio: controller.value.aspectRatio,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: CachedVideoPlayer(controller)))
+                          : const CircularProgressIndicator()),
                 ),
+                Visibility(
+                  visible: isVisible,
+                  child: MaterialButton(
+
+                    minWidth: 55,
+                    height: 55,
+                    onPressed: (){
+                      if(isPlaying){
+                        controller.pause();
+                        setState(() {
+                          isPlaying = false;
+                        });
+                      }else{
+                        controller.play();
+                        setState(() {
+                          isPlaying = true;
+                        });
+
+                      }
+                    },
+                    shape:const CircleBorder(),
+                    color: Colors.white,
+                    child: Icon(
+                      isPlaying?
+                      Icons.pause:Icons.play_arrow,
+                      color: Colors.black,
+                      size: 45,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         )
 
     );
