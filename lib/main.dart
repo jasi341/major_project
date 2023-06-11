@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:major_project/screens/splash_screen.dart';
+import 'package:major_project/widgets/vid.dart';
 
 
 late Size mq;

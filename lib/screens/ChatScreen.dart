@@ -26,11 +26,11 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
 
-  final ScrollController _scrollController = ScrollController();
 
   List<Message> _list = [];
   final _textController = TextEditingController();
   bool _showEmoji = false;
+  bool _isUploading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +78,9 @@ class _ChatScreenState extends State<ChatScreen> {
                               final data = snapshot.data?.docs;
                               _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
                               if(_list.isNotEmpty){
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  _scrollToBottom();
-                                });
                                 return ListView.builder(
+                                  reverse: true,
 
-                                  controller: _scrollController,
                                   itemCount: _list.length,
                                   physics: const BouncingScrollPhysics(),
                                   itemBuilder: (context,index){
@@ -119,6 +116,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         }
                     ),
                   ),
+                  if(_isUploading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 16),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: CircularProgressIndicator(strokeWidth: 2,)
+                      ),
+                    ),
                   _chatInput(),
                   if(_showEmoji)
                     SizedBox(
@@ -248,18 +253,26 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       )),
                   IconButton(
-                    onPressed: () {
+                    onPressed: (){
+                      _showBottomSheet();
                     },
-                    icon:  const Icon(CupertinoIcons.photo_fill, color: Colors.blue,size: 25),
+                    icon:  const Icon(CupertinoIcons.paperclip, color: Colors.blue,size: 25),
                   ),
                   IconButton(
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
                       final XFile? image = await picker.pickImage(source: ImageSource.camera,imageQuality: 70);
                       if(image!= null){
+                        setState(() {
+                          _isUploading = true;
+                        });
                         await APIs.sendChatImage(widget.user,File(image.path));
+                        setState(() {
+                          _isUploading = false;
+                        });
                       }
                     },
+
                     icon:  const Icon(CupertinoIcons.camera_fill, color: Colors.blue,size: 25),
                   ),
                 ],
@@ -293,7 +306,7 @@ class _ChatScreenState extends State<ChatScreen> {
       APIs.sendMessage(
           widget.user,
           _textController.text,
-        Type.text
+          Type.text
 
       );
       _textController.clear();
@@ -303,14 +316,158 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 700),
-        curve: Curves.easeOut
-      );
-    }
+  void _showBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        isDismissible: false,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))),
+        builder: (_){
+          return SizedBox(
+              height: MediaQuery.of(context).size.height*0.32,
+              child: Stack(
+                children: [
+                  const SizedBox(height: 10,),
+                  Positioned(
+                      right: 10,
+                      top: 5,
+                      child:  GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child:  Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.cancel, color: Colors.grey,),
+                              const SizedBox(width:2,),
+                              Text('Close',style: GoogleFonts.acme(fontSize: 17,color: Colors.grey),)
+                            ],
+                          ),
+                        ),
+                      )
+                  ),
+                  Column(
+                    children: [
+                      const SizedBox(height: 10,),
+                      Divider(
+                        color: Colors.grey,
+                        thickness: 5,
+                        height: 3,
+                        endIndent: MediaQuery.of(context).size.width*.42,
+                        indent:  MediaQuery.of(context).size.width*.42,),
+                      const SizedBox(height: 30,),
+                      Center(
+                          child: Text(
+                            'Choose From',
+                            style: GoogleFonts.robotoSerif(
+                                fontSize: 22,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700
+                            ),
+                          )
+                      ),
+                      const SizedBox(height: 25,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                        children: [
+                          //for gallery
+                          Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+                            ),
+                            color: Colors.white70,
+                            elevation: 25,
+                            shadowColor: Colors.black,
+                            child: InkWell(
+                              onTap: () async {
+                                final ImagePicker picker = ImagePicker();
+                                final List<XFile> images = await picker.pickMultiImage(imageQuality: 70);
+
+                                for(var i in images){
+                                  //disable the bottom sheet
+                                  Navigator.pop(context);
+
+                                  setState(() {
+                                    _isUploading = true;
+                                  });
+                                  await APIs.sendChatImage(widget.user,File(i.path));
+                                  setState(() {
+                                    _isUploading = false;
+                                  });
+
+                                }
+                              },
+                              splashColor: Colors.tealAccent,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.photo,size: 60),
+                                    const SizedBox(height:5),
+                                    Text('Gallery',style: GoogleFonts.acme(fontSize: 22,),),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+
+                          //for video
+                          Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+                            ),
+                            color: Colors.white,
+                            elevation: 25,
+                            shadowColor: Colors.black,
+                            child: InkWell(
+                              onTap: () async {
+                                final ImagePicker picker = ImagePicker();
+                                final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
+                                if(video!= null){
+                                  //disable the bottom sheet
+                                  Navigator.pop(context);
+
+                                  setState(() {
+                                    _isUploading = true;
+                                  });
+                                  await APIs.sendChatVideo(widget.user,File(video.path));
+                                  setState(() {
+                                    _isUploading = false;
+                                  });
+                                }
+                              },
+
+                              splashColor: Colors.tealAccent,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.video_camera_back_outlined,size: 60,),
+                                    const SizedBox(height:5),
+                                    Text('Gallery',style: GoogleFonts.acme(fontSize: 22,),),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10,)
+                    ],
+                  )
+
+                ],
+              ));
+        });
+
   }
 
 

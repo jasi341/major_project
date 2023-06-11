@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/api/apis.dart';
 import 'package:major_project/helper/dateUtils.dart';
-
 import '../data/message.dart';
+import 'package:cached_video_preview/cached_video_preview.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard({super.key, required this.message});
@@ -15,7 +16,20 @@ class MessageCard extends StatefulWidget {
   State<MessageCard> createState() => _MessageCardState();
 }
 
+
 class _MessageCardState extends State<MessageCard> {
+  late CachedVideoPlayerController controller;
+  var videoUr = '';
+  @override
+  void initState() {
+    var videoUrl = widget.message.msg;
+    videoUr = widget.message.msg;
+    controller = CachedVideoPlayerController.network(videoUrl)
+      ..initialize().then((_) {
+        setState(() {});
+      });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return APIs.user.uid == widget.message.fromId? _greyMessage():_blueMessage();
@@ -35,75 +49,124 @@ class _MessageCardState extends State<MessageCard> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 14),
-            decoration:  const BoxDecoration(
-              color:  Color(0x2b0f4857),
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child:
-            widget.message.type == Type.text?
-
-            Text(
-              widget.message.msg,
-              style: GoogleFonts.robotoSerif(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 17
+              padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 14),
+              decoration:  const BoxDecoration(
+                color:  Color(0x2b0f4857),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-            ):
-            GestureDetector(
-              onTap: (){
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context)=>Scaffold(
-                      backgroundColor: Colors.white70,
-                      appBar: AppBar(
-                        backgroundColor: Colors.blueAccent.shade700,
-                        title: const Text("Image"),
-                      ),
-                      body: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Center(
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
-                              child: CachedNetworkImage(
-                                width:MediaQuery.of(context).size.width ,
+              child: widget.message.type == Type.text?
+              Text(
+                widget.message.msg,
+                style: GoogleFonts.robotoSerif(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17
+                ),
+              )
+                  : widget.message.type == Type.video?
+              Stack(
+                alignment: Alignment.center,
+                children: [
+
+                  CachedVideoPreviewWidget(
+                    path: widget.message.msg,
+                    type: SourceType.remote,
+                    remoteImageBuilder: (BuildContext context, url) => Image.network(url),
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context)=>Scaffold(
+                            backgroundColor: Colors.white70,
+                            appBar: AppBar(
+                              backgroundColor: Colors.blueAccent.shade700,
+                              title: const Text("Video"),
+                            ),
+                            body: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height,
+                                    child:CachedVideoPreviewWidget(
+                                      path: widget.message.msg,
+                                      type: SourceType.remote,
+                                      remoteImageBuilder: (BuildContext context, url) => Image.network(url),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ))
+                      );
+                    },
+                    child: Icon(
+                      Icons.play_circle_fill_rounded,
+                      size: 50,
+                      color: Colors.blueAccent.shade700,
+                    ),
+                  ),
+
+                ],
+              )
+
+                  :GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context)=>Scaffold(
+                        backgroundColor: Colors.white70,
+                        appBar: AppBar(
+                          backgroundColor: Colors.blueAccent.shade700,
+                          title: const Text("Image"),
+                        ),
+                        body: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Center(
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.height,
-                                imageUrl: widget.message.msg,
-                                fit: BoxFit.fill,
-                                placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
-                                errorWidget: (context, url, error) =>   const Icon(
-                                  Icons.image,size: 70,
+                                child: CachedNetworkImage(
+                                  width:MediaQuery.of(context).size.width ,
+                                  height: MediaQuery.of(context).size.height,
+                                  imageUrl: widget.message.msg,
+                                  fit: BoxFit.fill,
+                                  placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                                  errorWidget: (context, url, error) =>   const Icon(
+                                    Icons.image,size: 70,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
+                      ))
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width*0.75 ,
+                    height: MediaQuery.of(context).size.height*0.4,
+                    child: CachedNetworkImage(
+                      width:MediaQuery.of(context).size.width*0.75 ,
+                      height: MediaQuery.of(context).size.height/2,
+                      imageUrl: widget.message.msg,
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                      errorWidget: (context, url, error) =>   const Icon(
+                        Icons.image,size: 70,
                       ),
-                    ))
-                );
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width*0.75 ,
-                  height: MediaQuery.of(context).size.height*0.4,
-                  child: CachedNetworkImage(
-                    width:MediaQuery.of(context).size.width*0.75 ,
-                    height: MediaQuery.of(context).size.height/2,
-                    imageUrl: widget.message.msg,
-                    fit: BoxFit.fill,
-                    placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
-                    errorWidget: (context, url, error) =>   const Icon(
-                      Icons.image,size: 70,
                     ),
                   ),
                 ),
-              ),
-            ),
+              )
+
+
           ),
           const SizedBox(height: 3),
           Row(
@@ -140,77 +203,84 @@ class _MessageCardState extends State<MessageCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding:  EdgeInsets.all(widget.message.type == Type.text ?
-               14:4
-            ),
-            decoration:  const BoxDecoration(
-              color: Color(0xff0F4857),
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child:
-            widget.message.type == Type.text?
-
-            Text(
-              widget.message.msg,
-              style: GoogleFonts.robotoSerif(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 17
+              padding:  EdgeInsets.all(widget.message.type == Type.text ?
+              14:4
               ),
-            ):
-            GestureDetector(
-              onTap: (){
-                Navigator.push(context,
-                MaterialPageRoute(builder: (context)=>Scaffold(
-                  backgroundColor: const Color(0xff0F4857),
-                  appBar: AppBar(
-                    backgroundColor: Colors.blueAccent.shade700,
-                    title: const Text("Image"),
-                  ),
-                  body: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10) ,
-                      child: Center(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          child: CachedNetworkImage(
-                            width:MediaQuery.of(context).size.width ,
-                            height: MediaQuery.of(context).size.height,
-                            imageUrl: widget.message.msg,
-                            fit: BoxFit.fill,
-                            placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
-                            errorWidget: (context, url, error) =>   const Icon(
-                              Icons.image,size: 70,
+              decoration:  const BoxDecoration(
+                color: Color(0xff0F4857),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child:
+              widget.message.type == Type.text?
+
+              Text(
+                widget.message.msg,
+                style: GoogleFonts.robotoSerif(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17
+                ),
+              ):
+              widget.message.type == Type.video?
+              Center(
+                  child: controller.value.isInitialized
+                      ? AspectRatio(
+                      aspectRatio: controller.value.aspectRatio,
+                      child: CachedVideoPlayer(controller))
+                      : const CircularProgressIndicator()):
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context)=>Scaffold(
+                        backgroundColor: const Color(0xff0F4857),
+                        appBar: AppBar(
+                          backgroundColor: Colors.blueAccent.shade700,
+                          title: const Text("Image"),
+                        ),
+                        body: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10) ,
+                            child: Center(
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
+                                child: CachedNetworkImage(
+                                  width:MediaQuery.of(context).size.width ,
+                                  height: MediaQuery.of(context).size.height,
+                                  imageUrl: widget.message.msg,
+                                  fit: BoxFit.fill,
+                                  placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                                  errorWidget: (context, url, error) =>   const Icon(
+                                    Icons.image,size: 70,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
+                      ))
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width*0.75 ,
+                    height: MediaQuery.of(context).size.height*0.4,
+                    child: CachedNetworkImage(
+                      width:MediaQuery.of(context).size.width*0.75 ,
+                      height: MediaQuery.of(context).size.height/2,
+                      imageUrl: widget.message.msg,
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                      errorWidget: (context, url, error) =>   const Icon(
+                        Icons.image,size: 70,
                       ),
                     ),
                   ),
-                ))
-                );
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width*0.75 ,
-                  height: MediaQuery.of(context).size.height*0.4,
-                  child: CachedNetworkImage(
-                    width:MediaQuery.of(context).size.width*0.75 ,
-                    height: MediaQuery.of(context).size.height/2,
-                    imageUrl: widget.message.msg,
-                    fit: BoxFit.fill,
-                    placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
-                    errorWidget: (context, url, error) =>   const Icon(
-                      Icons.image,size: 70,
-                    ),
-                  ),
                 ),
-              ),
-            ),
+              )
           ),
           const SizedBox(height: 3),
           Row(
@@ -239,4 +309,6 @@ class _MessageCardState extends State<MessageCard> {
       ),
     );
   }
+
 }
+

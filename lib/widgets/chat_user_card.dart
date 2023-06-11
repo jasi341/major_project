@@ -83,12 +83,31 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   ),
 
                   title: Text(widget.user.name,style: GoogleFonts.roboto(),),
-                  subtitle: Text(
-                    _message != null
-                        ? _message!.msg
-                        : widget.user.about,
-                    maxLines: 1,
-                    style: GoogleFonts.roboto(),
+                  subtitle: Row(
+                    children: [
+                      _message != null && _message!.type == Type.image?
+                        Row(
+                          children: [
+                            const Icon(Icons.image,size: 15,color: Colors.grey,),
+                            const SizedBox(width: 5,),
+                            Text('Image',style: GoogleFonts.roboto(color: Colors.black54),),
+                          ],
+                        ):
+                    _message != null && _message!.type == Type.text?
+                      Text(
+                        _message!.msg,
+                        maxLines: 1,
+                        style: GoogleFonts.roboto(),
+                      ):
+                        _message != null && _message!.type == Type.video?
+                        Row(
+                          children: [
+                            const Icon(Icons.video_camera_back_outlined,size: 15,color: Colors.grey,),
+                            const SizedBox(width: 5,),
+                            Text('Video',style: GoogleFonts.roboto(color: Colors.black54),),
+                          ],
+                        ): const SizedBox(),
+                    ],
                   ),
                   trailing:_message== null? null :
                       _message!.read.isEmpty  && _message!.fromId != APIs.user.uid?

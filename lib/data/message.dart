@@ -19,7 +19,7 @@ class Message {
     toId = json['toId'].toString();
     msg = json['msg'].toString();
     read = json['read'].toString();
-    type = json['type'].toString() == Type.image.name ? Type.image : Type.text;
+    type = json['type'].toString() == Type.image.name ? Type.image : Type.video.name == json['type'].toString() ? Type.video : Type.text;
     fromId = json['fromId'].toString();
     sent = json['sent'].toString();
   }

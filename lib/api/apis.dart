@@ -103,6 +103,7 @@ class APIs{
   static Stream<QuerySnapshot<Map<String, dynamic>>>  getAllMessages(ChatUser user){
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages')
+        .orderBy('sent',descending: true)
         .snapshots();
   }
 
@@ -162,6 +163,20 @@ class APIs{
     });
     final imageUrl  = await ref.getDownloadURL();
     await sendMessage(chatUser, imageUrl, Type.image);
+
+  }
+  static Future<void> sendChatVideo(ChatUser chatUser,File file) async {
+
+    final ext = file.path.split(".").last;
+
+    final ref = storage.ref().child('videos/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+
+    await ref.putFile(file,SettableMetadata(contentType:'video/$ext' )).then((p0){
+      log("Data Transferred: ${p0.bytesTransferred/1000}kb");
+
+    });
+    final videoUrl  = await ref.getDownloadURL();
+    await sendMessage(chatUser, videoUrl, Type.video);
 
   }
 }
