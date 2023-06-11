@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/data/chat_user.dart';
-import 'package:major_project/nav_anim/message.dart';
+import 'package:major_project/data/message.dart';
 import '../api/apis.dart';
 import '../helper/dateUtils.dart';
 import '../nav_anim/chat_nav_anim.dart';
@@ -92,7 +92,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   ),
                   trailing:_message== null? null :
                       _message!.read.isEmpty  && _message!.fromId != APIs.user.uid?
-                      const Icon(Icons.done_all_outlined,size: 19,color: Colors.blue,):
+                      const Icon(Icons.circle,size: 15,color: Colors.green,):
                       Text(MyDateUtils.getLastMessageTime(context: context, time: _message!.sent),
                           style: GoogleFonts.roboto(color: Colors.black54)
                       ),

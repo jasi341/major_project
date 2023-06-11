@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:major_project/data/chat_user.dart';
 
 import '../api/apis.dart';
-import '../nav_anim/message.dart';
+import '../data/message.dart';
 import '../widgets/message_card.dart';
 
 
@@ -26,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   List<Message> _list = [];
   final _textController = TextEditingController();
+  bool _showEmoji = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,73 +39,110 @@ class _ChatScreenState extends State<ChatScreen> {
         value: const SystemUiOverlayStyle(
           statusBarColor: Color(0xFF000080),
         ),
-        child: Scaffold(
-          backgroundColor: const Color(0xfff7ede2),
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            flexibleSpace: _appBar(),
-          ),
-          body: Column(
-            children: [
-
-              Expanded(
-                child: StreamBuilder(
-                    stream: APIs.getAllMessages(widget.user),
-                    builder: (context,snapshot){
-                      switch(snapshot.connectionState){
-                        case ConnectionState.waiting:
-                        case ConnectionState.none:
-                          return const SizedBox();
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          final data = snapshot.data?.docs;
-                          _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
-                          if(_list.isNotEmpty){
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              _scrollToBottom();
-                            });
-                            return ListView.builder(
-
-                              controller: _scrollController,
-                              itemCount: _list.length,
-                              physics: const BouncingScrollPhysics(),
-                              itemBuilder: (context,index){
-                                return   MessageCard(message: _list[index]);
-                              },
-                            );
-
-                          }else{
-                            return  GestureDetector(
-                              onTap: (){
-                                _textController.text = 'Hi';
-                              },
-                              child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      LottieBuilder.asset(
-                                        'assets/animation/sayhi.json',
-                                        repeat: true,
-                                        animate: true,
-                                        fit: BoxFit.cover,
-
-                                      ),
-                                      const SizedBox(height:10),
-                                    ],
-                                  )
-                              ),
-                            );
-                          }
-                      }
-                    }
-                ),
+        child: GestureDetector(
+          onTap: (){
+            setState(() {
+              _showEmoji = false;
+              FocusScope.of(context).unfocus();
+            });
+          },
+          child: WillPopScope(
+            onWillPop: ()  {
+              if(_showEmoji){
+                setState(() {
+                  _showEmoji = !_showEmoji;
+                });
+                return Future.value(false);
+              }
+              return Future.value(true);
+            },
+            child: Scaffold(
+              backgroundColor: const Color(0xfff7ede2),
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                flexibleSpace: _appBar(),
               ),
-              _chatInput()
-            ],
-          ),
+              body: Column(
+                children: [
 
+                  Expanded(
+                    child: StreamBuilder(
+                        stream: APIs.getAllMessages(widget.user),
+                        builder: (context,snapshot){
+                          switch(snapshot.connectionState){
+                            case ConnectionState.waiting:
+                            case ConnectionState.none:
+                              return const SizedBox();
+                            case ConnectionState.active:
+                            case ConnectionState.done:
+                              final data = snapshot.data?.docs;
+                              _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
+                              if(_list.isNotEmpty){
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  _scrollToBottom();
+                                });
+                                return ListView.builder(
+
+                                  controller: _scrollController,
+                                  itemCount: _list.length,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context,index){
+                                    return   MessageCard(message: _list[index]);
+                                  },
+                                );
+
+                              }else{
+                                return  GestureDetector(
+                                  onTap: (){
+                                    _textController.text = 'Hi';
+                                  },
+                                  child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          LottieBuilder.asset(
+                                            'assets/animation/sayhi.json',
+                                            repeat: true,
+                                            animate: true,
+                                            fit: BoxFit.cover,
+
+                                          ),
+                                          const SizedBox(height:10),
+                                        ],
+                                      )
+                                  ),
+                                );
+                              }
+                          }
+                        }
+                    ),
+                  ),
+                  _chatInput(),
+                  if(_showEmoji)
+                    SizedBox(
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.35,
+                      child: EmojiPicker(
+                          textEditingController: _textController,
+                          config: Config(
+                            bgColor: const Color(0xfff7ede2),
+                            columns: 8,
+                            emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
+
+                          )
+                      ),
+                    )
+
+
+                ],
+              ),
+
+            ),
+          ),
         ),
       ),
     );
@@ -167,11 +209,21 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   IconButton(
                     onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() {
+                        _showEmoji = !_showEmoji;
+                      });
                     },
                     icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.blue),
                   ),
                   Expanded(
                       child: TextField(
+                        onTap: (){
+
+                          setState(() {
+                            _showEmoji = false;
+                          });
+                        },
                         controller: _textController,
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
@@ -201,7 +253,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon:  const Icon(CupertinoIcons.photo_fill, color: Colors.blue,size: 25),
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image = await picker.pickImage(source: ImageSource.camera,imageQuality: 70);
+                      if(image!= null){
+                        await APIs.sendChatImage(widget.user,File(image.path));
+                      }
                     },
                     icon:  const Icon(CupertinoIcons.camera_fill, color: Colors.blue,size: 25),
                   ),
@@ -218,7 +275,7 @@ class _ChatScreenState extends State<ChatScreen> {
               splashColor: Colors.blueGrey,
               padding: const EdgeInsets.all(10),
               onPressed: (){
-             validateAndSend();
+                validateAndSend();
               },
               shape: const CircleBorder(),
               minWidth: 5,
@@ -235,7 +292,9 @@ class _ChatScreenState extends State<ChatScreen> {
     if(_textController.text.isNotEmpty){
       APIs.sendMessage(
           widget.user,
-          _textController.text
+          _textController.text,
+        Type.text
+
       );
       _textController.clear();
     }
@@ -249,7 +308,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 700),
-        curve: Curves.easeInOut,
+        curve: Curves.easeOut
       );
     }
   }

@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:major_project/data/Collections.dart';
 import 'package:major_project/data/chat_user.dart';
-import 'package:major_project/nav_anim/message.dart';
+import 'package:major_project/data/message.dart';
 
 class APIs{
   static  FirebaseAuth auth = FirebaseAuth.instance;
@@ -106,7 +106,7 @@ class APIs{
         .snapshots();
   }
 
-  static Future<void> sendMessage(ChatUser chatUser , String msg) async{
+  static Future<void> sendMessage(ChatUser chatUser , String msg,Type type) async{
 
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -114,7 +114,7 @@ class APIs{
         toId: chatUser.id,
         msg: msg,
         read: '',
-        type: Type.text,
+        type: type,
         fromId:user.uid ,
         sent: time
     );
@@ -144,5 +144,24 @@ class APIs{
         .orderBy('sent',descending: true)
         .limit(1)
         .snapshots();
+  }
+
+  // static Future<void> sendChatVideo(ChatUser chatUser,File file){
+  //
+  // }
+
+  static Future<void> sendChatImage(ChatUser chatUser,File file) async {
+
+    final ext = file.path.split(".").last;
+
+    final ref = storage.ref().child('images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+
+    await ref.putFile(file,SettableMetadata(contentType:'image/$ext' )).then((p0){
+      log("Data Transferred: ${p0.bytesTransferred/1000}kb");
+
+    });
+    final imageUrl  = await ref.getDownloadURL();
+    await sendMessage(chatUser, imageUrl, Type.image);
+
   }
 }
