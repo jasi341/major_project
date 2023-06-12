@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/api/apis.dart';
@@ -19,18 +18,7 @@ class MessageCard extends StatefulWidget {
 
 
 class _MessageCardState extends State<MessageCard> {
-  late CachedVideoPlayerController controller;
-  var videoUr = '';
-  @override
-  void initState() {
-    var videoUrl = widget.message.msg;
-    videoUr = widget.message.msg;
-    controller = CachedVideoPlayerController.network(videoUrl)
-      ..initialize().then((_) {
-        setState(() {});
-      });
-    super.initState();
-  }
+
   @override
   Widget build(BuildContext context) {
     return APIs.user.uid == widget.message.fromId? _greyMessage():_blueMessage();

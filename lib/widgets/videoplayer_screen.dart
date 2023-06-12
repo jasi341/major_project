@@ -1,7 +1,6 @@
-
-import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String msg;
@@ -16,7 +15,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   bool isPlaying = false;
   bool isVisible = false;
 
-  late CachedVideoPlayerController controller;
+  late VideoPlayerController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +42,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 SizedBox(
 
                   child: Center(
-                      child: controller.value.isInitialized
+                      child: _controller.value.isInitialized
                           ? AspectRatio(
-                          aspectRatio: controller.value.aspectRatio,
+                          aspectRatio: _controller.value.aspectRatio,
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(18),
-                              child: CachedVideoPlayer(controller)))
+                              child: _controller.value.isInitialized
+                                  ? VideoPlayer(_controller)
+                                  : const CircularProgressIndicator()
+                          )
+                      )
                           : const CircularProgressIndicator()),
                 ),
                 Visibility(
@@ -59,12 +62,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     height: 55,
                     onPressed: (){
                       if(isPlaying){
-                        controller.pause();
+                        _controller.pause();
                         setState(() {
                           isPlaying = false;
                         });
                       }else{
-                        controller.play();
+                        _controller.play();
                         setState(() {
                           isPlaying = true;
                         });
@@ -91,10 +94,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   void initState() {
-    controller = CachedVideoPlayerController.network(
+    _controller = VideoPlayerController.network(
         widget.msg);
-    controller.play();
-    controller.initialize().then((value) {
+    _controller.play();
+    _controller.initialize().then((value) {
       setState(() {
         isPlaying = true;
       });
@@ -105,11 +108,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   void dispose() {
-    controller.pause();
+    _controller.pause();
     setState(() {
       isPlaying = false;
     });
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
