@@ -12,6 +12,7 @@ import 'package:major_project/data/chat_user.dart';
 
 import '../api/apis.dart';
 import '../data/message.dart';
+import '../helper/dateUtils.dart';
 import '../widgets/message_card.dart';
 
 
@@ -141,8 +142,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           )
                       ),
                     )
-
-
                 ],
               ),
 
@@ -155,44 +154,123 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _appBar() {
     return InkWell(
-      onTap: (){},
-      child: Container(color:const Color(0xFF000080) ,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back, color: Colors.white), ),
-            CircleAvatar(
-              radius: 19,
-              child: ClipOval(
-                child: SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: CachedNetworkImage(
-                    imageUrl: widget.user.image,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const CircularProgressIndicator(color: Colors.yellow),
-                    errorWidget: (context, url, error) =>  CircleAvatar(
-                      child: Image.asset('assets/images/profile.png'),
+      onTap: (){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context)=>Scaffold(
+              backgroundColor: const Color(0xff1b242d),
+              appBar: AppBar(
+                backgroundColor: const Color(0xff3a5872),
+                title: Text(widget.user.name),
+              ),
+              body: Stack(
+                  children:[ Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      const SizedBox(height: 25,),
+                      Center(
+                        child: CircleAvatar(
+                          maxRadius: MediaQuery.of(context).size.width*0.25,
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              height: MediaQuery.of(context).size.width*0.5,
+                              width: MediaQuery.of(context).size.width*0.5,
+                              imageUrl: widget.user.image,
+                              fit: BoxFit.fill,
+                              placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
+                              errorWidget: (context, url, error) =>  CircleAvatar(
+                                child: Image.asset('assets/images/profile.png'),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10,),
+                      const SizedBox(height: 10,),
+                      Text(
+                        "About :${widget.user.about}",
+                        style: GoogleFonts.roboto(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),),
+                      const SizedBox(height: 10,),
+
+                    ],
+                  ),
+                    Positioned(
+                      bottom: 10,
+                      left:MediaQuery.of(context).size.width*0.25,
+                      right: MediaQuery.of(context).size.width*0.25,
+                      child: Text(
+                        "Joined on :${MyDateUtils.getLastMessageTime(context: context, time: widget.user.createdAt,showYear: true)}",
+                        style: GoogleFonts.roboto(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),),
+                    ),
+
+                  ]
+              ),
+            )));
+      },
+      child: StreamBuilder(
+        stream:APIs.getUserInfo(widget.user),
+        builder: (context,snapshot){
+
+          final data = snapshot.data?.docs;
+          final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+
+          return Container(color:const Color(0xFF000080) ,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back, color: Colors.white), ),
+                CircleAvatar(
+                  radius: 19,
+                  child: ClipOval(
+                    child: SizedBox(
+                      width: 90,
+                      height: 90,
+                      child: CachedNetworkImage(
+                        imageUrl: list.isNotEmpty ? list[0].image : widget.user.image,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const CircularProgressIndicator(color: Colors.yellow),
+                        errorWidget: (context, url, error) =>  CircleAvatar(
+                          child: Image.asset('assets/images/profile.png'),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                const SizedBox(width: 9,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      list.isNotEmpty ? list[0].name :
+                      widget.user.name,
+                      style: GoogleFonts.acme(fontSize: 20,color: Colors.white),
+                    ),
+                    const SizedBox(height: 2,),
+                    Text(
+                        list.isNotEmpty ?
+                        list[0].isOnline?'Online':
+                        MyDateUtils.getLastActiveTime(context: context, lastActive: list[0].lastActive)
+                            :MyDateUtils.getLastActiveTime(context: context, lastActive: widget.user.lastActive),
+                        style: GoogleFonts.acme(fontSize: 13,color: Colors.white.withAlpha(210))
+                    )
+                  ],
+                )
+              ],
             ),
-            const SizedBox(width: 9,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(widget.user.name,style: GoogleFonts.acme(fontSize: 20,color: Colors.white),),
-                const SizedBox(height: 2,),
-                Text(widget.user.lastActive,style: GoogleFonts.acme(fontSize: 13,color: Colors.white.withAlpha(210)))
-              ],)
-          ],
-        ),
+          );
+        },
       ),
     );
   }

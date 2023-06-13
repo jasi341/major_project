@@ -5,7 +5,7 @@ class MyDateUtils {
     final date = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
     return TimeOfDay.fromDateTime(date).format(context);
   }
-  static String getLastMessageTime({required BuildContext context,required String time}) {
+  static String getLastMessageTime({required BuildContext context,required String time,bool showYear = false}) {
     final DateTime sent = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
     final DateTime now = DateTime.now();
 
@@ -13,7 +13,8 @@ class MyDateUtils {
         now.year == sent.year) {
       return TimeOfDay.fromDateTime(sent).format(context);
     }
-    return '${sent.day}/${_getMonth(sent)}';
+
+    return showYear ? '${sent.day} ${_getMonth(sent)} ${sent.year}' : '${sent.day} ${_getMonth(sent)}';
   }
 
 
@@ -45,5 +46,31 @@ class MyDateUtils {
         return 'Dec';
     }
     return '';
+  }
+
+  static String getLastActiveTime(
+      {required BuildContext context, required String lastActive}) {
+    final int i = int.tryParse(lastActive) ?? -1;
+
+    //if time is not available then return below statement
+    if (i == -1) return 'Last seen not available';
+
+    DateTime time = DateTime.fromMillisecondsSinceEpoch(i);
+    DateTime now = DateTime.now();
+
+    String formattedTime = TimeOfDay.fromDateTime(time).format(context);
+    if (time.day == now.day &&
+        time.month == now.month &&
+        time.year == time.year) {
+      return 'Last seen today at $formattedTime';
+    }
+
+    if ((now.difference(time).inHours / 24).round() == 1) {
+      return 'Last seen yesterday at $formattedTime';
+    }
+
+    String month = _getMonth(time);
+
+    return 'Last seen on ${time.day} $month on $formattedTime';
   }
 }

@@ -147,10 +147,6 @@ class APIs{
         .snapshots();
   }
 
-  // static Future<void> sendChatVideo(ChatUser chatUser,File file){
-  //
-  // }
-
   static Future<void> sendChatImage(ChatUser chatUser,File file) async {
 
     final ext = file.path.split(".").last;
@@ -177,6 +173,24 @@ class APIs{
     });
     final videoUrl  = await ref.getDownloadURL();
     await sendMessage(chatUser, videoUrl, Type.video);
+
+  }
+
+  static Stream<QuerySnapshot<Map<String,dynamic>>> getUserInfo(ChatUser chatUser){
+    return firestore
+        .collection(CollectionsConst.userCollection)
+        .where("id",isEqualTo: chatUser.id)
+        .snapshots();
+  }
+
+  static Future<void> updateActiveStatus(bool isOnline ) async{
+
+    firestore
+        .collection(CollectionsConst.userCollection)
+        .doc(user.uid).update({
+      'is_online':isOnline,
+      'last_active':DateTime.now().millisecondsSinceEpoch.toString()
+    });
 
   }
 }

@@ -1,6 +1,8 @@
-
+import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
@@ -32,9 +34,29 @@ class _HomeScreenState extends State<HomeScreen>  {
   @override
   void initState() {
     APIs.getSelfInfo();
+
+    APIs.updateActiveStatus(true);
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      log('State :$message');
+
+      if(APIs.auth.currentUser !=null) {
+        if (message.toString().contains('pause')) {
+          APIs.updateActiveStatus(false);
+        }
+        if (message.toString().contains('resume')) {
+          APIs.updateActiveStatus(true);
+        }
+        if (message.toString().contains('destroy')) {
+          APIs.updateActiveStatus(false);
+          // Perform additional cleanup tasks here
+        }
+      }
+      return Future.value(message);
+    });
     super.initState();
 
   }
+
   @override
   Widget build(BuildContext context) {
 
@@ -296,12 +318,14 @@ class _HomeScreenState extends State<HomeScreen>  {
   }
   void _signOut() async {
     Dialogs.showProgressBar(context, Colors.greenAccent, "Logging out...");
+    await APIs.updateActiveStatus(false);
     await APIs.auth.signOut().then((value) async {
       await GoogleSignIn().signOut().then((value) {
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
+        APIs.auth = FirebaseAuth.instance;
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
       });
 
