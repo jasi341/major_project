@@ -73,7 +73,10 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         child: CachedNetworkImage(
                           imageUrl: widget.user.image,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.yellow),
+                          placeholder: (context, url) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const CircularProgressIndicator(color: Colors.yellow),
+                          ),
                           errorWidget: (context, url, error) =>  CircleAvatar(
                             child: Image.asset('assets/images/profile.png'),
                           ),
@@ -95,8 +98,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         ):
                     _message != null && _message!.type == Type.text?
                       Text(
-                        _message!.msg,
+                        _message!.msg.length > 14? '${_message!.msg.substring(0,14)}...':_message!.msg,
                         maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.roboto(),
                       ):
                         _message != null && _message!.type == Type.video?

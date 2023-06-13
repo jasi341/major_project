@@ -63,33 +63,6 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
   }
 
 
-
-  // @override
-  // void initState() {
-  //   APIs.getSelfInfo();
-  //
-  //   APIs.updateActiveStatus(true);
-  //   SystemChannels.lifecycle.setMessageHandler((message) {
-  //     log('State :$message');
-  //
-  //     if(APIs.auth.currentUser !=null) {
-  //       if (message.toString().contains('pause')) {
-  //         APIs.updateActiveStatus(false);
-  //       }
-  //       if (message.toString().contains('resume')) {
-  //         APIs.updateActiveStatus(true);
-  //       }
-  //       if (message.toString().contains('destroy')) {
-  //         APIs.updateActiveStatus(false);
-  //         // Perform additional cleanup tasks here
-  //       }
-  //     }
-  //     return Future.value(message);
-  //   });
-  //   super.initState();
-  //
-  // }
-
   @override
   Widget build(BuildContext context) {
 

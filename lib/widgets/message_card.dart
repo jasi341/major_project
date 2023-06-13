@@ -86,6 +86,7 @@ class _MessageCardState extends State<MessageCard> {
               )
 
                   :GestureDetector(
+
                 onTap: (){
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context)=>Scaffold(
@@ -107,7 +108,10 @@ class _MessageCardState extends State<MessageCard> {
                                   height: MediaQuery.of(context).size.height,
                                   imageUrl: widget.message.msg,
                                   fit: BoxFit.fill,
-                                  placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                                  placeholder: (context, url) => const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                                  ),
                                   errorWidget: (context, url, error) =>   const Icon(
                                     Icons.image,size: 70,
                                   ),
@@ -129,7 +133,10 @@ class _MessageCardState extends State<MessageCard> {
                       height: MediaQuery.of(context).size.height/2,
                       imageUrl: widget.message.msg,
                       fit: BoxFit.fill,
-                      placeholder: (context, url) => const CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                      placeholder: (context, url) => const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(strokeWidth:2,color: Colors.yellow),
+                      ),
                       errorWidget: (context, url, error) =>   const Icon(
                         Icons.image,size: 70,
                       ),

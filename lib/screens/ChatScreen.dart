@@ -154,64 +154,153 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _appBar() {
     return InkWell(
       onTap: (){
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context)=>Scaffold(
-              backgroundColor: const Color(0xff1b242d),
-              appBar: AppBar(
-                backgroundColor: const Color(0xff3a5872),
-                title: Text(widget.user.name),
-              ),
-              body: Stack(
-                  children:[ Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      const SizedBox(height: 25,),
-                      Center(
-                        child: CircleAvatar(
-                          maxRadius: MediaQuery.of(context).size.width*0.25,
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              height: MediaQuery.of(context).size.width*0.5,
-                              width: MediaQuery.of(context).size.width*0.5,
-                              imageUrl: widget.user.image,
-                              fit: BoxFit.fill,
-                              placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
-                              errorWidget: (context, url, error) =>  CircleAvatar(
-                                child: Image.asset('assets/images/profile.png'),
+
+        showDialog(context: context,
+            barrierDismissible: false,
+
+            barrierColor: Colors.black.withOpacity(0.5),
+            builder: (context){
+              return AlertDialog(
+                elevation: 5,
+                shadowColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)
+                ),
+                contentPadding: EdgeInsets.zero,
+
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      children: [
+                        Positioned(
+                          right: 5,
+                          top: 5,
+                          child: GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                              child: const Icon(Icons.cancel,color:Color(0xFFD3D3D3),size: 30,)),
+                           // child: IconButton(
+
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14.0,vertical: 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+
+
+                              Center(
+                                child: CircleAvatar(
+                                  maxRadius: MediaQuery.of(context).size.width*0.25,
+                                  child: ClipOval(
+                                    child: CachedNetworkImage(
+                                      height: MediaQuery.of(context).size.width*0.5,
+                                      width: MediaQuery.of(context).size.width*0.5,
+                                      imageUrl: widget.user.image,
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
+                                      errorWidget: (context, url, error) =>  CircleAvatar(
+                                        child: Image.asset('assets/images/profile.png'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 10,),
+                              const SizedBox(height: 10,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Name :",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900,
+
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.user.name,
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Email :",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900,
+
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        Clipboard.setData(ClipboardData(text: widget.user.email));
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Email copied to clipboard')));
+                                      },
+                                      child: Text(
+                                        widget.user.email,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: true,
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                              const SizedBox(height: 10,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Joined on :",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900,
+
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    MyDateUtils.getLastMessageTime(context: context, time: widget.user.createdAt,showYear: true),
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10,),
-                      const SizedBox(height: 10,),
-                      Text(
-                        "About :${widget.user.about}",
-                        style: GoogleFonts.roboto(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),),
-                      const SizedBox(height: 10,),
-
-                    ],
-                  ),
-                    Positioned(
-                      bottom: 10,
-                      left:MediaQuery.of(context).size.width*0.25,
-                      right: MediaQuery.of(context).size.width*0.25,
-                      child: Text(
-                        "Joined on :${MyDateUtils.getLastMessageTime(context: context, time: widget.user.createdAt,showYear: true)}",
-                        style: GoogleFonts.roboto(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),),
+                      ],
                     ),
-
-                  ]
-              ),
-            )));
+                  ],
+                ),
+              );
+            }
+        );
       },
       child: StreamBuilder(
         stream:APIs.getUserInfo(widget.user),

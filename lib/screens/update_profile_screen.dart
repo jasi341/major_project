@@ -74,7 +74,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                               width: 150,
                               imageUrl: widget.user.image,
                               fit: BoxFit.fill,
-                              placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
+                              placeholder: (context, url) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: const CircularProgressIndicator(color: Colors.amberAccent),
+                              ),
                               errorWidget: (context, url, error) =>  CircleAvatar(
                                 child: Image.asset('assets/images/profile.png'),
                               ),
