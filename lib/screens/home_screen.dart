@@ -24,38 +24,71 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>  {
+class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
 
   List<ChatUser> _list =[];
   final List<ChatUser> _searchList =[];
   bool _isSearching = false;
 
-
   @override
   void initState() {
-    APIs.getSelfInfo();
-
-    APIs.updateActiveStatus(true);
-    SystemChannels.lifecycle.setMessageHandler((message) {
-      log('State :$message');
-
-      if(APIs.auth.currentUser !=null) {
-        if (message.toString().contains('pause')) {
-          APIs.updateActiveStatus(false);
-        }
-        if (message.toString().contains('resume')) {
-          APIs.updateActiveStatus(true);
-        }
-        if (message.toString().contains('destroy')) {
-          APIs.updateActiveStatus(false);
-          // Perform additional cleanup tasks here
-        }
-      }
-      return Future.value(message);
-    });
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
+    APIs.getSelfInfo();
+    APIs.updateActiveStatus(true);
   }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    APIs.updateActiveStatus(false);
+    // Perform additional cleanup tasks here
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    log('State :$state');
+    if (APIs.auth.currentUser != null) {
+      if (state == AppLifecycleState.paused) {
+        APIs.updateActiveStatus(false);
+      } else if (state == AppLifecycleState.resumed) {
+        APIs.updateActiveStatus(true);
+      }else if (state == AppLifecycleState.detached) {
+        APIs.updateActiveStatus(false);
+        log('Destroyed :hi');
+
+      }
+    }
+  }
+
+
+
+  // @override
+  // void initState() {
+  //   APIs.getSelfInfo();
+  //
+  //   APIs.updateActiveStatus(true);
+  //   SystemChannels.lifecycle.setMessageHandler((message) {
+  //     log('State :$message');
+  //
+  //     if(APIs.auth.currentUser !=null) {
+  //       if (message.toString().contains('pause')) {
+  //         APIs.updateActiveStatus(false);
+  //       }
+  //       if (message.toString().contains('resume')) {
+  //         APIs.updateActiveStatus(true);
+  //       }
+  //       if (message.toString().contains('destroy')) {
+  //         APIs.updateActiveStatus(false);
+  //         // Perform additional cleanup tasks here
+  //       }
+  //     }
+  //     return Future.value(message);
+  //   });
+  //   super.initState();
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {

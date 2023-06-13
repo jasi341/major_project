@@ -27,7 +27,6 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
 
-
   List<Message> _list = [];
   final _textController = TextEditingController();
   bool _showEmoji = false;
@@ -390,7 +389,16 @@ class _ChatScreenState extends State<ChatScreen> {
       _textController.clear();
     }
     else{
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please Enter Some Text'),duration: Duration(milliseconds: 1500),));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please Enter Some Text !'),
+            duration: Duration(milliseconds: 1500),
+            behavior: SnackBarBehavior.floating,
+            closeIconColor: Colors.green,
+            showCloseIcon: true,
+
+
+          ));
     }
   }
 
