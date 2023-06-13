@@ -26,37 +26,42 @@ class _ProfilePhotoScreenState extends State<ProfilePhotoScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return  Stack(
-      alignment: Alignment.center,
-      children: [
-        PinchZoom(
-          maxScale: 5,
-          resetDuration: const Duration(milliseconds: 1500),
-          zoomEnabled: true,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: CachedNetworkImage(
-              height: MediaQuery.of(context).size.width*0.75,
-              width: MediaQuery.of(context).size.width*0.75,
-              imageUrl: widget.profilePic,
-              placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
-              errorWidget: (context, url, error) =>  CircleAvatar(
-                child: Image.asset('assets/images/profile.png'),
+    return  Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile Photo'),
+      ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          PinchZoom(
+            maxScale: 5,
+            resetDuration: const Duration(milliseconds: 1500),
+            zoomEnabled: true,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: CachedNetworkImage(
+                height: MediaQuery.of(context).size.width*0.75,
+                width: MediaQuery.of(context).size.width*0.75,
+                imageUrl: widget.profilePic,
+                placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
+                errorWidget: (context, url, error) =>  CircleAvatar(
+                  child: Image.asset('assets/images/profile.png'),
+                ),
               ),
             ),
           ),
-        ),
-        Visibility(
-          visible: _isLottiePlaying,
-          child: LottieBuilder.asset(
-            'assets/animation/pinch.json',
-            repeat: true,
-            animate: true,
-            fit: BoxFit.cover,
+          Visibility(
+            visible: _isLottiePlaying,
+            child: LottieBuilder.asset(
+              'assets/animation/pinch.json',
+              repeat: true,
+              animate: true,
+              fit: BoxFit.cover,
 
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
 
   }
