@@ -14,6 +14,7 @@ import '../api/apis.dart';
 import '../data/message.dart';
 import '../helper/dateUtils.dart';
 import '../widgets/message_card.dart';
+import 'profile_photo.dart';
 
 
 class ChatScreen extends StatefulWidget {
@@ -177,32 +178,41 @@ class _ChatScreenState extends State<ChatScreen> {
                           right: 5,
                           top: 5,
                           child: GestureDetector(
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
                               child: const Icon(Icons.cancel,color:Color(0xFFD3D3D3),size: 30,)),
-                           // child: IconButton(
+                          // child: IconButton(
 
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 14.0,vertical: 8),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
 
 
                               Center(
-                                child: CircleAvatar(
-                                  maxRadius: MediaQuery.of(context).size.width*0.25,
-                                  child: ClipOval(
-                                    child: CachedNetworkImage(
-                                      height: MediaQuery.of(context).size.width*0.5,
-                                      width: MediaQuery.of(context).size.width*0.5,
-                                      imageUrl: widget.user.image,
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
-                                      errorWidget: (context, url, error) =>  CircleAvatar(
-                                        child: Image.asset('assets/images/profile.png'),
+                                child: GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePhotoScreen(profilePic: widget.user.image,)
+                                    )
+                                    );
+
+                                  },
+                                  child: CircleAvatar(
+                                    maxRadius: MediaQuery.of(context).size.width*0.25,
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        height: MediaQuery.of(context).size.width*0.5,
+                                        width: MediaQuery.of(context).size.width*0.5,
+                                        imageUrl: widget.user.image,
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
+                                        errorWidget: (context, url, error) =>  CircleAvatar(
+                                          child: Image.asset('assets/images/profile.png'),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -237,7 +247,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Email :",
+                                    "Email : ",
                                     style: GoogleFonts.roboto(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w900,
@@ -259,7 +269,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         style: GoogleFonts.roboto(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.black,
+                                          color: Colors.blueAccent,
                                         ),
                                       ),
                                     ),
@@ -290,6 +300,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 10,),
 
                             ],
                           ),
@@ -408,6 +419,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           validateAndSend();
                         },
                         textInputAction: TextInputAction.done,
+                        autocorrect: false,
                         decoration: InputDecoration(
                             hintText: 'Type SomeThing...',
                             hintStyle: GoogleFonts.acme(

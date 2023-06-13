@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:major_project/screens/splash_screen.dart';
@@ -8,9 +9,11 @@ import 'package:major_project/screens/splash_screen.dart';
 
 late Size mq;
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -22,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Color(0x1A000080),
-      systemNavigationBarColor: Colors.teal// Set your desired color here
+      systemNavigationBarColor: Colors.transparent// Set your desired color here
     ));
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown]);
 
