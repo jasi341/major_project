@@ -291,4 +291,23 @@ class APIs {
       log(e.toString());
     }
   }
+  static Future<void> deleteMessage(Message message) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages')
+        .doc(message.sent)
+        .delete();
+
+    if(message.type == Type.image || message.type == Type.video) {
+      await storage.refFromURL(message.msg).delete();
+    }
+  }
+
+  static Future<void> updateMessage(Message message, String msg) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages')
+        .doc(message.sent)
+        .update({
+      'msg': msg,
+    });
+  }
 }

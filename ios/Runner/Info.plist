@@ -71,5 +71,8 @@
 
      <key>NSCameraUsageDescription</key>
         <string>This app require access to the camera for taking images</string>
+
+        <key>NSPhotoLibraryAddUsageDescription</key>
+            <string>This app require access to read and write for saving images or videos</string>
 	</dict>
 </plist>

@@ -21,11 +21,11 @@ dependencies:
   google_sign_in: ^6.1.2
   cloud_firestore: ^4.8.0
   firebase_messaging: ^14.6.3
+  firebase_storage: ^11.2.2
 
   intl: ^0.17.0
   image_picker: ^0.8.7+5
   video_player: ^2.6.1
-  firebase_storage: ^11.2.2
   cached_network_image: ^3.2.3
   emoji_picker_flutter: ^1.6.1
   cached_video_preview: ^1.0.6
@@ -33,6 +33,7 @@ dependencies:
   flutter_statusbarcolor_ns: ^0.5.0
   http: ^0.13.3
   flutter_notification_channel: ^2.0.0
+  gallery_saver: ^2.3.2
 
 dev_dependencies:
   flutter_test:
