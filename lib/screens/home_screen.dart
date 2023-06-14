@@ -233,8 +233,9 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                               );
                               break;
                             case 2:
-                              Navigator.push(context, MaterialPageRoute(builder: (
-                                  context) => const ChatWithBot()));
+                              Dialogs.showSnackbar(context,' Coming soon', Colors.grey, SnackBarBehavior.fixed, Colors.black87);
+                              // Navigator.push(context, MaterialPageRoute(builder: (
+                              //     context) => const ChatWithBot()));
                           }
                         }
                       }
@@ -256,93 +257,129 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
 
             ),
             body:Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: StreamBuilder(
-                stream: APIs.getMyUsersId(),
-                  builder: (context,snapshot){
-                    switch(snapshot.connectionState){
-                      case ConnectionState.waiting:
-                      case ConnectionState.none:
-                        return
-                          const Center(child: Card(child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(height:10),
-                              CircularProgressIndicator(),
-                              SizedBox(height:10),
-                              Text('Loading...'),
-                            ],
-                          )
-                          )
-                          );
+                padding: const EdgeInsets.only(top: 8.0),
+                child: StreamBuilder(
+                    stream: APIs.getMyUsersId(),
+                    builder: (context,snapshot){
+                      switch(snapshot.connectionState){
+                        case ConnectionState.waiting:
+                        case ConnectionState.none:
+                          return
+                            const Center(child: Card(child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(height:10),
+                                CircularProgressIndicator(),
+                                SizedBox(height:10),
+                                Text('Loading...'),
+                              ],
+                            )
+                            )
+                            );
 
-                      case ConnectionState.active:
-                      case ConnectionState.done:
-                  return StreamBuilder(
-                      stream: APIs.getAllUsers(
-                          snapshot.data?.docs.map((e) => e.id).toList() ?? []),
-                      builder: (context,snapshot){
-                        switch(snapshot.connectionState){
-                          case ConnectionState.waiting:
-                          case ConnectionState.none:
-                            return
-
-                              const Center(child: Card(child: Column(
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          if(!snapshot.hasData|| snapshot.data!.docs.isEmpty) {
+                            return Center(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(height:10),
-                                  CircularProgressIndicator(),
-                                  SizedBox(height:10),
-                                  Text('Loading...'),
+                                  LottieBuilder.asset(
+                                    'assets/animation/no-user.json',
+                                    repeat: true,
+                                    animate: true,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    'No connections found',
+                                    style: GoogleFonts.acme(fontSize: 22),
+                                  ),
                                 ],
-                              )
-                              )
-                              );
+                              ),
+                            );
 
-                          case ConnectionState.active:
-                          case ConnectionState.done:
-                            final data = snapshot.data?.docs;
-                            _list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+                          }else {
+                            final userIds = snapshot.data?.docs.map((e) => e.id).toList()??[];
+                            return StreamBuilder(
+                              stream: APIs.getAllUsers(
+                                  snapshot.data?.docs.map((e) => e.id)
+                                      .toList() ?? []),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                  case ConnectionState.none:
+                                    return const Center(
+                                        child: Card(child: Column(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .center,
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(height: 10),
+                                            CircularProgressIndicator(),
+                                            SizedBox(height: 10),
+                                            Text('Loading...'),
+                                          ],
+                                        )
+                                        )
+                                    );
 
-                            if(_list.isNotEmpty){
-                              return ListView.builder(
-                                itemCount:_isSearching? _searchList.length : _list.length,
-                                physics: const BouncingScrollPhysics(),
-                                itemBuilder: (context,index){
-                                  return  ChatUserCard(
-                                    user:_isSearching?_searchList[index]:_list[index],
-                                  );
-                                },
-                              );
+                                  case ConnectionState.active:
+                                  case ConnectionState.done:
+                                    final data = snapshot.data?.docs;
+                                    _list = data?.map((e) =>
+                                        ChatUser.fromJson(e.data())).toList() ??
+                                        [];
 
-                            }else{
-                              return  Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      LottieBuilder.asset(
-                                        'assets/animation/no-user.json',
-                                        repeat: true,
-                                        animate: true,
-                                        fit: BoxFit.cover,
+                                    if (_list.isNotEmpty) {
+                                      return ListView.builder(
+                                        itemCount: _isSearching ? _searchList
+                                            .length : _list.length,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          return ChatUserCard(
+                                            user: _isSearching
+                                                ? _searchList[index]
+                                                : _list[index],
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      return Center(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .center,
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              LottieBuilder.asset(
+                                                'assets/animation/no-user.json',
+                                                repeat: true,
+                                                animate: true,
+                                                fit: BoxFit.cover,
 
-                                      ),
-                                      const SizedBox(height:10),
-                                      Text('No users found',style: GoogleFonts.acme(fontSize: 22,),),
-                                    ],
-                                  ));
-                            }
-                        }
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Text('No Connections found',
+                                                style: GoogleFonts.acme(
+                                                  fontSize: 22,),),
+                                            ],
+                                          ));
+                                    }
+                                }
+                              }
+                          );
+                          }
+
                       }
-                  );
-                }
-              })
+                    })
             )
         ),
       ),
@@ -432,15 +469,15 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
 
                           if(!value){
 
-                          Fluttertoast.showToast(
-                              msg: "User does not exist!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.blueGrey,
-                              textColor: Colors.white,
-                              fontSize: 16.0
-                          );
+                            Fluttertoast.showToast(
+                                msg: "User does not exist!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.blueGrey,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
                           }
                           else{
                             Fluttertoast.showToast(
