@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
@@ -243,28 +243,27 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                     icon: const Icon(Icons.more_vert_outlined),
                   ),
                 ),
-
-
               ],
             ),
             //to add new user
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                _addChatUserDialog();
+              },
               backgroundColor: const Color(0xB3000080),
               splashColor: Colors.blueGrey,
-              child: const Icon(Icons.add_comment_rounded,),
+              child: const Center(child: Icon(CupertinoIcons.person_add,size : 30)),
 
             ),
             body:Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: StreamBuilder(
-                  stream: APIs.getAllUsers(),
+                stream: APIs.getMyUsersId(),
                   builder: (context,snapshot){
                     switch(snapshot.connectionState){
                       case ConnectionState.waiting:
                       case ConnectionState.none:
                         return
-
                           const Center(child: Card(child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -281,42 +280,69 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
 
                       case ConnectionState.active:
                       case ConnectionState.done:
-                        final data = snapshot.data?.docs;
-                        _list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+                  return StreamBuilder(
+                      stream: APIs.getAllUsers(
+                          snapshot.data?.docs.map((e) => e.id).toList() ?? []),
+                      builder: (context,snapshot){
+                        switch(snapshot.connectionState){
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return
 
-                        if(_list.isNotEmpty){
-                          return ListView.builder(
-                            itemCount:_isSearching? _searchList.length : _list.length,
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context,index){
-                              return  ChatUserCard(
-                                user:_isSearching?_searchList[index]:_list[index],
-                              );
-                            },
-                          );
-
-                        }else{
-                          return  Center(
-                              child: Column(
+                              const Center(child: Card(child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  LottieBuilder.asset(
-                                    'assets/animation/no-user.json',
-                                    repeat: true,
-                                    animate: true,
-                                    fit: BoxFit.cover,
-
-                                  ),
-                                  const SizedBox(height:10),
-                                  Text('No users found',style: GoogleFonts.acme(fontSize: 22,),),
+                                  SizedBox(height:10),
+                                  CircularProgressIndicator(),
+                                  SizedBox(height:10),
+                                  Text('Loading...'),
                                 ],
-                              ));
+                              )
+                              )
+                              );
+
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
+                            _list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+
+                            if(_list.isNotEmpty){
+                              return ListView.builder(
+                                itemCount:_isSearching? _searchList.length : _list.length,
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: (context,index){
+                                  return  ChatUserCard(
+                                    user:_isSearching?_searchList[index]:_list[index],
+                                  );
+                                },
+                              );
+
+                            }else{
+                              return  Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      LottieBuilder.asset(
+                                        'assets/animation/no-user.json',
+                                        repeat: true,
+                                        animate: true,
+                                        fit: BoxFit.cover,
+
+                                      ),
+                                      const SizedBox(height:10),
+                                      Text('No users found',style: GoogleFonts.acme(fontSize: 22,),),
+                                    ],
+                                  ));
+                            }
                         }
-                    }
-                  }
-              ),
+                      }
+                  );
+                }
+              })
             )
         ),
       ),
@@ -337,6 +363,114 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
 
 
     });
+
+  }
+  void _addChatUserDialog() {
+    String email = '';
+
+    showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              title: Row(
+                children: [
+                  const Icon(CupertinoIcons.person_add,color: Colors.black87,size: 26,),
+                  const SizedBox(width: 10,),
+                  Text(
+                      "Add User",
+                      style: GoogleFonts.robotoSerif(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87
+                      )
+                  ),
+                ],
+              ),
+              content: TextFormField(
+                onChanged: (value){
+                  email = value;
+                },
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.black87)
+                    ),
+                    hintText: "Email Id",
+                    prefixIcon:  Icon(CupertinoIcons.mail,color: Colors.grey.shade700,),
+                    hintStyle: GoogleFonts.robotoSerif(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey
+                    )
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    child:  Text(
+                        "Cancel",
+                        style: GoogleFonts.robotoSerif(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.blueGrey
+                        )
+                    )
+                ),
+                TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      if(email.isNotEmpty){
+                        APIs.addChatUser(email).then((value){
+
+                          if(!value){
+
+                          Fluttertoast.showToast(
+                              msg: "User does not exist!",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.blueGrey,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                          );
+                          }
+                          else{
+                            Fluttertoast.showToast(
+                                msg: "User added successfully!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.blueGrey,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
+                          }
+                        }
+                        );
+
+                      }
+
+                    },
+                    child:  Text(
+                        "Add",
+                        style: GoogleFonts.robotoSerif(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.blue
+                        )
+                    )
+                ),
+              ],
+            )
+    );
 
   }
 }

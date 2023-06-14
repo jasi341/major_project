@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -30,16 +29,6 @@ class APIs {
         log('Token: $token');
       }
     });
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   log('Got a message whilst in the foreground!');
-    //   log('Message data: ${message.data}');
-    //
-    //   if (message.notification != null) {
-    //     log('Message also contained a notification: ${message.notification}');
-    //   }
-    //});
-
-
   }
 
   static Future<bool> userExists() async {
@@ -48,6 +37,29 @@ class APIs {
         .doc(auth.currentUser!.uid)
         .get())
         .exists;
+  }
+
+  static Future<bool> addChatUser(String email) async {
+    final data = await firestore
+        .collection(CollectionsConst.userCollection)
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (data.docs.isNotEmpty && data.docs.first.id != user.uid) {
+
+      firestore
+          .collection(CollectionsConst.userCollection)
+          .doc(user.uid)
+          .collection('connections')
+          .doc(data.docs.first.id)
+          .set(data.docs.first.data());
+      return true;
+
+
+    }else{
+      return false;
+    }
+
   }
 
   static Future<void> getSelfInfo() async {
@@ -88,11 +100,31 @@ class APIs {
         .doc(user.uid).set(chatUser.toJson());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(List<String> userIds) {
+
+    log('UserIds: $userIds');
     return firestore
         .collection(CollectionsConst.userCollection)
-        .where("id", isNotEqualTo: user.uid)
+        .where("id", whereIn: userIds)
         .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUsersId() {
+    return firestore
+        .collection(CollectionsConst.userCollection)
+        .doc(user.uid)
+        .collection('connections')
+        .snapshots();
+  }
+
+  static Future<void> sendFirstMessage(ChatUser chatUser,String msg, Type type)async{
+    firestore.
+    collection(CollectionsConst.userCollection)
+        .doc(chatUser.id)
+    .collection('connections')
+    .doc(user.uid).set({}).then((value){
+      sendMessage(chatUser, msg, type);
+    });
   }
 
   static Future<void> updateUserInfo() async {
