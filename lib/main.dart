@@ -1,5 +1,11 @@
+import 'dart:developer';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_notification_channel/flutter_notification_channel.dart';
+import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:flutter_notification_channel/notification_visibility.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,11 +18,21 @@ late Size mq;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
   await Firebase.initializeApp();
+  var result = await FlutterNotificationChannel.registerNotificationChannel(
+    description: 'For showing notifications from chats.',
+    id: 'chats',
+    importance: NotificationImportance.IMPORTANCE_HIGH,
+    name: 'Chats',
+
+  );
+  log(result.toString());
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  log("Background Message Handler Set");
 
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -46,6 +62,18 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+  // Custom logic or actions based on the received message can be implemented here.
+}
+Future<void> backgroundHandler(RemoteMessage message) async {
+  await _firebaseMessagingBackgroundHandler(message);
+}
+
 
 
 

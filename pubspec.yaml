@@ -15,12 +15,15 @@ dependencies:
   fluttertoast: ^8.2.2
   url_launcher: ^6.1.11
   lottie: ^1.1.0
+  #firebase dependencies
   firebase_core: ^2.10.0
   firebase_auth: ^4.4.2
   google_sign_in: ^6.1.2
-  image_picker: ^0.8.7+5
   cloud_firestore: ^4.8.0
+  firebase_messaging: ^14.6.3
+
   intl: ^0.17.0
+  image_picker: ^0.8.7+5
   video_player: ^2.6.1
   firebase_storage: ^11.2.2
   cached_network_image: ^3.2.3
@@ -28,6 +31,8 @@ dependencies:
   cached_video_preview: ^1.0.6
   pinch_zoom: ^1.0.0
   flutter_statusbarcolor_ns: ^0.5.0
+  http: ^0.13.3
+  flutter_notification_channel: ^2.0.0
 
 dev_dependencies:
   flutter_test:

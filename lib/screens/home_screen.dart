@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     APIs.getSelfInfo();
-    APIs.updateActiveStatus(true);
+
   }
 
   @override
