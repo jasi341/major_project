@@ -10,11 +10,22 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.5
+
+  #native splash screen
   flutter_native_splash: ^2.3.0
+
+  #google fonts
   google_fonts: ^4.0.2
+
+  #toast
   fluttertoast: ^8.2.2
+
+  #For launching url
   url_launcher: ^6.1.11
+
+  #Lottie animation
   lottie: ^1.1.0
+
   #firebase dependencies
   firebase_core: ^2.10.0
   firebase_auth: ^4.4.2
@@ -24,17 +35,34 @@ dependencies:
   firebase_storage: ^11.2.2
 
   intl: ^0.17.0
+
+  #image picker & cache network image
   image_picker: ^0.8.7+5
-  video_player: ^2.6.1
   cached_network_image: ^3.2.3
-  emoji_picker_flutter: ^1.6.1
-  cached_video_preview: ^1.0.6
   pinch_zoom: ^1.0.0
+
+  #video player & video preview
+  video_player: ^2.6.1
+  cached_video_preview: ^1.0.6
+
+  #emoji picker
+  emoji_picker_flutter: ^1.6.1
+
+  # video and audio call sdk
+  zego_uikit_prebuilt_call: ^3.6.0
+
+  #for status bar color
   flutter_statusbarcolor_ns: ^0.5.0
+
+    #for notification
   http: ^0.13.3
   flutter_notification_channel: ^2.0.0
+
+  #for saving multimedia to gallery
   gallery_saver: ^2.3.2
 
+  #uuid generator
+  uuid: ^3.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

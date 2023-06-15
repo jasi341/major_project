@@ -301,7 +301,7 @@ class APIs {
           "click_action": "FLUTTER_NOTIFICATION_CLICK",
           "status": "done",
           "sound":"Tri-tone",
-          "screen": "chat",
+          "screen": "login",
           "user": me.id,
           "image": me.image,
           "name": me.name,
@@ -319,10 +319,18 @@ class APIs {
           },
           body: jsonEncode(body)
       );
+
+      if(res.statusCode == 200) {
+        log("Notification sent");
+      } else {
+        log("Notification sending failed");
+      }
     } catch (e) {
       log(e.toString());
     }
   }
+
+
   static Future<void> deleteMessage(Message message) async {
     await firestore
         .collection('chats/${getConversationID(message.toId)}/messages')
@@ -342,4 +350,6 @@ class APIs {
       'msg': msg,
     });
   }
+
+
 }
