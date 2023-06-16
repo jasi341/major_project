@@ -8,8 +8,9 @@ import 'data/message.dart';
 class CallScreen extends StatefulWidget {
   final ChatUser user;
   final String toId;
+  final bool isVideo;
 
-  const CallScreen({Key? key, required this.user, required this.toId, }) : super(key: key);
+  const CallScreen({Key? key, required this.user, required this.toId, required this.isVideo, }) : super(key: key);
 
   @override
   State<CallScreen> createState() => _CallScreenState();
@@ -27,7 +28,7 @@ class _CallScreenState extends State<CallScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Call ID: ${widget.toId}')
+            Text('Call ID: ${widget.isVideo}')
           ],
         ),
       ),
@@ -47,6 +48,7 @@ class _CallScreenState extends State<CallScreen> {
                       name: widget.user.name,
                       id: widget.user.id,
                       callID: widget.toId,
+                      isVideo: widget.isVideo,
                     ),
               ),
             );
@@ -64,12 +66,13 @@ class VideoCall extends StatefulWidget {
   final String name;
   final String id;
   final String callID;
+  final bool isVideo;
 
   const VideoCall({
     Key? key,
     required this.name,
     required this.id,
-    required this.callID,
+    required this.callID, required this.isVideo,
   }) : super(key: key);
 
   @override
@@ -88,7 +91,10 @@ class _VideoCallState extends State<VideoCall> {
       userID: widget.id,
       userName: widget.name,
       callID: widget.callID,
-      config: ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+      config: widget.isVideo?
+      ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+          :  ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
+
     );
   }
 }

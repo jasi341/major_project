@@ -321,10 +321,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
           final data = snapshot.data?.docs;
           final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-
-          log(" loggy :${_list.first.toId}");
-
-
           return Container(color:const Color(0xFF000080) ,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -408,8 +404,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                           )),
                                       TextButton(onPressed: (){
                                         Navigator.pop(context);
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId)));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId, isVideo: true,))
+                                        );
                                       },
                                           child:Text(
                                               "Yes",
@@ -418,10 +416,12 @@ class _ChatScreenState extends State<ChatScreen> {
                                               fontWeight: FontWeight.w500,
                                               color: Colors.blue,
                                             )
-                                          )),
+                                          )
+                                      ),
                                     ],
                                   );
-                                });
+                                }
+                                );
 
                               },
                               child: const Icon(
@@ -461,7 +461,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                           TextButton(onPressed: (){
                                             Navigator.pop(context);
                                             Navigator.push(context,
-                                                MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId)));
+                                                MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId,isVideo: false))
+                                            );
                                           },
                                               child:Text(
                                                   "Yes",
