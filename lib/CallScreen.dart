@@ -8,7 +8,8 @@ import 'data/message.dart';
 class CallScreen extends StatefulWidget {
   final ChatUser user;
   final String toId;
-  const CallScreen({Key? key, required this.user, required this.toId,}) : super(key: key);
+
+  const CallScreen({Key? key, required this.user, required this.toId, }) : super(key: key);
 
   @override
   State<CallScreen> createState() => _CallScreenState();
@@ -76,15 +77,18 @@ class VideoCall extends StatefulWidget {
 }
 
 class _VideoCallState extends State<VideoCall> {
+
   @override
   Widget build(BuildContext context) {
+
+
     return ZegoUIKitPrebuiltCall(
       appID: 572364672,
       appSign: '052e5d1434d7f1273ea323a12ce90cd78004b41e41531d819b734b59758e641c',
       userID: widget.id,
       userName: widget.name,
       callID: widget.callID,
-      config: ZegoUIKitPrebuiltCallConfig.groupVoiceCall(),
+      config: ZegoUIKitPrebuiltCallConfig.groupVideoCall()
     );
   }
 }
