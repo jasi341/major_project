@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:major_project/CallScreen.dart';
 import 'package:major_project/data/chat_user.dart';
 
 import '../api/apis.dart';
@@ -319,7 +321,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
           final data = snapshot.data?.docs;
           final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-
           return Container(color:const Color(0xFF000080) ,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -365,6 +366,127 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: GoogleFonts.acme(fontSize: 13,color: Colors.white.withAlpha(210))
                     )
                   ],
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child:Row(
+                        children:[
+                          InkWell(
+                              splashColor: Colors.white70,
+                              onTap: (){
+                                log("uid : ${widget.user.id}");
+                                showDialog(
+                                    context: context,
+                                    builder: (context){
+                                  return AlertDialog(
+                                    title :Text(
+                                        "Are you sure you want to Video Call this user?",
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(onPressed: (){
+                                        Navigator.pop(context);
+                                      },
+                                          child: Text(
+                                              "No",
+                                            style: GoogleFonts.roboto(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.red,
+                                              )
+                                          )),
+                                      TextButton(onPressed: (){
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId, isVideo: true,))
+                                        );
+                                      },
+                                          child:Text(
+                                              "Yes",
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.blue,
+                                            )
+                                          )
+                                      ),
+                                    ],
+                                  );
+                                }
+                                );
+
+                              },
+                              child: const Icon(
+                                  Icons.video_camera_back_outlined,
+                                  color: Colors.white,
+
+                              )
+                          ),
+                          const SizedBox(width: 15,),
+                          InkWell(
+                              onTap: (){
+                                log("uid : ${widget.user.id}");
+                                showDialog(
+                                    context: context,
+                                    builder: (context){
+                                      return AlertDialog(
+                                        title :Text(
+                                          "Are you sure you want to Voice Call this user?",
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                              child: Text(
+                                                  "No",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.red,
+                                                  )
+                                              )),
+                                          TextButton(onPressed: (){
+                                            Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId,isVideo: false))
+                                            );
+                                          },
+                                              child:Text(
+                                                  "Yes",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.blue,
+                                                  )
+                                              )),
+                                        ],
+                                      );
+                                    });
+
+                              },
+                              child: const Icon(
+                                  Icons.call,
+                                  color: Colors.white,
+
+                              )
+                          ),
+
+                        ],
+                      )
+                  ),
                 )
               ],
             ),

@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -199,10 +201,7 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
                   style: GoogleFonts.robotoSerif(color: Colors.white),
                   cursorColor: Colors.white,
                   keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (value) {
-                    _validateAndSubmit();
-                  },
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Name',
                     prefixIcon: const Icon(Icons.person,color: Colors.white70,),
@@ -314,7 +313,7 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
         imageUrl = imageUrl;
       });
       try {
-        APIs.createUser();
+       await  APIs.createUser();
 
         if(mounted) {
           Navigator.pop(context);
@@ -323,6 +322,7 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
                   builder: (context) => const HomeScreen()));
         }
       } catch (e) {
+        log('Error: $e');
         Fluttertoast.showToast(
           msg: "Something went wrong!",
           toastLength: Toast.LENGTH_SHORT,
