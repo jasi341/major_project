@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:major_project/data/chat_user.dart';
 import 'package:major_project/data/message.dart';
 import 'package:major_project/screens/profile_photo.dart';
-import '../CallScreen.dart';
 import '../api/apis.dart';
 import '../helper/dateUtils.dart';
 import '../nav_anim/chat_nav_anim.dart';
@@ -51,6 +52,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
 
               if(list.isNotEmpty){
                 _message = list.first;
+                log( "msg :${_message!.msg}");
               }
 
               return Container(
@@ -133,109 +135,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                               ),
                                             ),
                                             const SizedBox(height: 10,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                InkWell(
-                                                    onTap: (){
-                                                      Navigator.pop(context);
-                                                      Navigator.push(context, ChatNavAnim(
-                                                        builder: (context) =>  ChatScreen(user:widget.user),
-                                                      )
-                                                      );
-                                                    },
-                                                    child: Column(
-                                                      children: [
-                                                        const Icon(CupertinoIcons.chat_bubble_2_fill,color: Colors.grey,size: 35,),
-                                                        Text(
-                                                            'Message',
-                                                            style: GoogleFonts.acme(
-                                                                fontSize: 15,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.grey
-                                                            )
-                                                        )
-                                                      ],
-                                                    )),
-                                                InkWell(
-                                                  onTap: (){
-                                                    Navigator.pop(context);
-                                                 showModalBottomSheet(context: context, builder:
-                                                      (context){
-                                                    return SizedBox(
-                                                      height: 200,
-                                                      child: Column(
-                                                        children: [
-                                                          const SizedBox(height: 10,),
-                                                          const Text('Select Call Type',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-                                                          const SizedBox(height: 10,),
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                            children: [
-                                                              InkWell(
-                                                                  onTap: (){
-                                                                    Navigator.pop(context);
-                                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CallScreen(user: widget.user,message: _message!,)));
-                                                                  },
-                                                                  child: Column(
-                                                                    children: [
-                                                                      const Icon(CupertinoIcons.phone_fill,color: Colors.grey,size: 35,),
-                                                                      Text(
-                                                                          'Audio Call',
-                                                                          style: GoogleFonts.acme(
-                                                                              fontSize: 15,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: Colors.grey
-                                                                          )
-                                                                      )
-                                                                    ],
-                                                                  )),
-                                                              InkWell(
-                                                                  onTap: (){
-                                                                    Navigator.pop(context);
-                                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CallScreen(user: widget.user,message: _message!,)));
-                                                                  },
-                                                                  child: Column(
-                                                                    children: [
-                                                                      const Icon(CupertinoIcons.phone_circle_fill,color: Colors.grey,size: 35,),
-                                                                      Text(
-                                                                          'Video Call',
-                                                                          style: GoogleFonts.acme(
-                                                                              fontSize: 15,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: Colors.grey
-                                                                          )
-                                                                      )
-                                                                    ],
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 10,)
-                                                        ],
-                                                      ),
-                                                    );  }
-                                                  );
-
-                                                  },
-                                                    child: Column(
-                                                      children: [
-                                                        const Icon(CupertinoIcons.phone_circle_fill,color: Colors.grey,size: 35,),
-                                                        Text(
-                                                            'Video Call',
-                                                            style: GoogleFonts.acme(
-                                                                fontSize: 15,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.grey
-                                                            )
-                                                        )
-                                                      ],
-                                                    )),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 10,),
-
-
-
+                                            Text(widget.user.name,style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
                                           ],
                                         ),
                                       ),

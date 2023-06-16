@@ -1,22 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:zego_uikit/zego_uikit.dart';
-import 'package:uuid/uuid.dart';
+import 'package:major_project/api/apis.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-
 import 'data/chat_user.dart';
 import 'data/message.dart';
 
 class CallScreen extends StatefulWidget {
   final ChatUser user;
-  final Message message;
-  const CallScreen({Key? key, required this.user, required this.message}) : super(key: key);
+  final String toId;
+  const CallScreen({Key? key, required this.user, required this.toId,}) : super(key: key);
 
   @override
   State<CallScreen> createState() => _CallScreenState();
 }
 
 class _CallScreenState extends State<CallScreen> {
-  String? _callID;
+  String userName = FirebaseAuth.instance.currentUser?.displayName ?? '';
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,40 +26,28 @@ class _CallScreenState extends State<CallScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Call ID: ${widget.message.toId}')
+            Text('Call ID: ${widget.toId}')
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          if (_callID != null) {
+          if(widget.toId.isNotEmpty) {
+            APIs.sendMessage(
+                widget.user,
+                "$userName calling",
+                Type.text
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => VideoCall(
-                  name: widget.user.name,
-                  id: widget.user.id,
-                  callID: widget.message.toId,
-                ),
-              ),
-            );
-          } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Error'),
-                  content: Text('Please start a call first.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('OK'),
+                builder: (_) =>
+                    VideoCall(
+                      name: widget.user.name,
+                      id: widget.user.id,
+                      callID: widget.toId,
                     ),
-                  ],
-                );
-              },
+              ),
             );
           }
         },
