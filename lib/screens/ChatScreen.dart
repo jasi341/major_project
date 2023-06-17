@@ -406,7 +406,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         Navigator.pop(context);
                                         Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId, isVideo: true,))
+                                            MaterialPageRoute(builder: (context)=> VideoCall(user: widget.user, toId:_list.first.toId, isVideo: true,))
                                         );
                                       },
                                           child:Text(
@@ -461,7 +461,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                           TextButton(onPressed: (){
                                             Navigator.pop(context);
                                             Navigator.push(context,
-                                                MaterialPageRoute(builder: (context)=> CallScreen(user: widget.user, toId:_list.first.toId,isVideo: false))
+                                                MaterialPageRoute(builder: (context)=> VideoCall(user: widget.user, toId:_list.first.toId,isVideo: false))
                                             );
                                           },
                                               child:Text(

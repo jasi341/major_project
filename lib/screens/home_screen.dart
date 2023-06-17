@@ -10,7 +10,6 @@ import 'package:major_project/api/apis.dart';
 import 'package:major_project/data/chat_user.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
-import 'package:major_project/screens/chat_with_bot/chatWithBot.dart';
 import 'package:major_project/screens/update_profile_screen.dart';
 import '../widgets/chat_user_card.dart';
 import 'auth/login_signup_screen.dart';
@@ -84,8 +83,6 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
             backgroundColor: Colors.white,
             appBar: AppBar(
               //on clicking user will be redirected to home screen
-              leading: Center(child: IconButton(
-                onPressed: () {}, icon: const Icon(CupertinoIcons.home),)),
               title: _isSearching?
               CupertinoTextField(
                 style: GoogleFonts.robotoSerif(
@@ -304,7 +301,6 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                             );
 
                           }else {
-                            final userIds = snapshot.data?.docs.map((e) => e.id).toList()??[];
                             return StreamBuilder(
                               stream: APIs.getAllUsers(
                                   snapshot.data?.docs.map((e) => e.id)
