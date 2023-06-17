@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         children: [
           Padding(
             padding:  EdgeInsets.only(top:mq.height*0.2),
-            child: Center(child: AnimatedImage()),
+            child: const Center(child: AnimatedImage()),
           ),
           Padding(
             padding:  EdgeInsets.symmetric(horizontal:mq.width*0.1,vertical: 45),
@@ -47,18 +47,23 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ElevatedButton(
                   onPressed: (){
                     Navigator.push(
-                      context,
-                      LoginNavAnim(builder: (context) =>  const Login()));
+                        context,
+                        LoginNavAnim(builder: (context) =>  const Login()));
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 45),
-                      backgroundColor:Colors.blue
+                      backgroundColor:Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
+
                   ),
                   child:  Text(
                     'Login',
                     style: GoogleFonts.robotoSerif(
                         fontStyle: FontStyle.normal,
-                        fontSize: 20
+                        fontSize: 20,
+                      color: Colors.white
                     ),
                   ),
                 ),
@@ -75,13 +80,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 45),
-                      backgroundColor: Colors.green
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                   child:  Text(
                     'Register',
                     style: GoogleFonts.robotoSerif(
                         fontStyle: FontStyle.normal,
-                        fontSize: 20
+                        fontSize: 20,
+                      color: Colors.white
                     ),
                   ),
                 ),
@@ -129,7 +138,7 @@ class _AnimatedImageState extends State<AnimatedImage> with SingleTickerProvider
           SlideTransition(
             position: _animation,
             child: Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 8),
+              padding:  const EdgeInsets.symmetric(horizontal: 8),
               child: Image.asset('assets/images/ic.png',height: mq.height*0.7,width: mq.width*0.7,),
             ),
           ),

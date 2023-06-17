@@ -90,7 +90,7 @@ class _SignUpState extends State<SignUp> {
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -98,7 +98,7 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            const SizedBox(height: 15,),
+            const SizedBox(height: 18,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextField(
@@ -126,7 +126,7 @@ class _SignUpState extends State<SignUp> {
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -135,7 +135,7 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 18,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextField(
@@ -166,7 +166,7 @@ class _SignUpState extends State<SignUp> {
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -175,8 +175,7 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            const SizedBox(height: 15,),
-            const SizedBox(height: 15,),
+            const SizedBox(height: 25,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -198,13 +197,14 @@ class _SignUpState extends State<SignUp> {
                           color: Colors.white,
                           fontSize: 13,
                           decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.w700
+                          decorationColor: Colors.white,
+                          fontWeight: FontWeight.bold
                       )
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 15,),
+            const SizedBox(height: 20,),
             Padding(
               padding: const EdgeInsets.only(right: 20.0,left: 20.0,bottom: 5.0) ,
               child: ElevatedButton(
@@ -213,18 +213,23 @@ class _SignUpState extends State<SignUp> {
                 },
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 45),
-                    backgroundColor:Colors.blue
+                    backgroundColor:Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )
                 ),
                 child:  Text(
                   'Continue',
                   style: GoogleFonts.robotoSerif(
                       fontStyle: FontStyle.normal,
-                      fontSize: 20
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 15,),
+            const SizedBox(height: 10,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -249,7 +254,10 @@ class _SignUpState extends State<SignUp> {
                       color: Colors.white,
                       fontSize: 16,
                       decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.w800,
+                      decorationColor: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      decorationThickness: 1.5,
+                      decorationStyle: TextDecorationStyle.solid,
                     ),
                   ),
                 ),

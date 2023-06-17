@@ -258,12 +258,16 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 45),
                     backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                   child: Text(
                     'Continue',
                     style: GoogleFonts.robotoSerif(
                       fontStyle: FontStyle.normal,
                       fontSize: 20,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -277,13 +281,17 @@ class _RegistrationProfileScreenState extends State<RegistrationProfileScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 45),
-                      backgroundColor:Colors.red
+                      backgroundColor:Colors.red,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                   child:  Text(
                     'Remove Image',
                     style: GoogleFonts.robotoSerif(
                         fontStyle: FontStyle.normal,
-                        fontSize: 20
+                        fontSize: 20,
+                        color: Colors.white
                     ),
                   ),
                 ),
