@@ -1,11 +1,12 @@
 
-import 'dart:developer';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:major_project/color_pallete/pallete.dart';
+import 'package:major_project/screens/chat_with_bot/chatgpt.dart';
+import 'package:major_project/screens/chat_with_bot/dalle.dart';
 
 class ChatWithBot extends StatefulWidget {
   const ChatWithBot({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class ChatWithBot extends StatefulWidget {
 }
 
 class _ChatWithBotState extends State<ChatWithBot> {
+
+  bool _isLoading = false;
   int delayAmount = 200;
 
 
@@ -48,7 +51,7 @@ class _ChatWithBotState extends State<ChatWithBot> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: Lottie.asset(
-                      'assets/animation/bot1.json',
+                    'assets/animation/bot1.json',
                     repeat: true,
                     reverse: true,
                     animate: true,
@@ -77,27 +80,40 @@ class _ChatWithBotState extends State<ChatWithBot> {
 
                     child: InkWell(
                       onTap: (){
-                        log('ChatGPT');
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        //delay the navigation for 2 seconds
+                        Future.delayed(const Duration(seconds: 2)).then((value) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (_)=>const ChatGptScreen()
+                          )
+                          );
+
+                        }
+                        );
                       },
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.4,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset('assets/images/openAi.png', height: 70, width: 70,),
-                              const SizedBox(height: 4,),
-                               Text(
-                                 'ChatGPT',
-                                style: GoogleFonts.robotoSerif(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset('assets/images/openAi.png', height: 70, width: 70,),
+                                const SizedBox(height: 4,),
+                                Text(
+                                  'ChatGPT',
+                                  style: GoogleFonts.robotoSerif(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white
+                                  ),
                                 ),
-                               ),
-                              const SizedBox(height: 8,),
-                            ]
+                                const SizedBox(height: 8,),
+                              ]
                           ),
                         ),
                       ),
@@ -116,7 +132,21 @@ class _ChatWithBotState extends State<ChatWithBot> {
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
                         onTap: (){
-                          log('Dalle-E');
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          //delay the navigation for 2 seconds
+                          Future.delayed(const Duration(seconds: 2)).then((value) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_)=>const DalleScreen()
+                                )
+                            );
+
+                          });
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -144,6 +174,14 @@ class _ChatWithBotState extends State<ChatWithBot> {
               ],
             ),
           ),
+          Visibility(
+            visible: _isLoading,
+            child: const SpinKitThreeBounce(
+              color: Colors.black,
+              size: 25,
+
+            ),
+          )
         ],
       ),
     );
