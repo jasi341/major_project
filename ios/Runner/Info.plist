@@ -74,5 +74,11 @@
 
         <key>NSPhotoLibraryAddUsageDescription</key>
             <string>This app require access to read and write for saving images or videos</string>
+
+            <key>NSSpeechRecognitionUsageDescription</key>
+            <string>This app require access to speech recognition for voice recognition</string>
+
+            <key>NSMicrophoneUsageDescription</key>
+            <string>This app require access to microphone for voice recognition</string>
 	</dict>
 </plist>

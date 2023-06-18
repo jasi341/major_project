@@ -243,13 +243,18 @@ class _LoginState extends State<Login> {
                 },
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 45),
-                    backgroundColor:Colors.blue
+                    backgroundColor:Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    )
                 ),
                 child:  Text(
                   'Login',
                   style: GoogleFonts.robotoSerif(
                       fontStyle: FontStyle.normal,
-                      fontSize: 20
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white
                   ),
                 ),
               ),

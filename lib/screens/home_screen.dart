@@ -11,8 +11,10 @@ import 'package:major_project/data/chat_user.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
 import 'package:major_project/screens/update_profile_screen.dart';
+import '../color_pallete/pallete.dart';
 import '../widgets/chat_user_card.dart';
 import 'auth/login_signup_screen.dart';
+import 'chat_with_bot/chatWithBot.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -230,9 +232,9 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                               );
                               break;
                             case 2:
-                              Dialogs.showSnackbar(context,' Coming soon', Colors.grey, SnackBarBehavior.fixed, Colors.black87);
-                              // Navigator.push(context, MaterialPageRoute(builder: (
-                              //     context) => const ChatWithBot()));
+                              //Dialogs.showSnackbar(context,' Coming soon', Colors.grey, SnackBarBehavior.fixed, Colors.black87);
+                              Navigator.push(context, MaterialPageRoute(builder: (
+                                  context) => const ChatWithBot()));
                           }
                         }
                       }
@@ -248,8 +250,7 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
               onPressed: () {
                 _addChatUserDialog();
               },
-              backgroundColor: const Color(0xB3000080),
-              splashColor: Colors.blueGrey,
+              backgroundColor: Pallete.secondSuggestionBoxColor,
               child: const Center(child: Icon(CupertinoIcons.person_add,size : 30)),
 
             ),

@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "ChatHub",
       theme: ThemeData(
+        useMaterial3: true,
           appBarTheme: AppBarTheme(
               centerTitle: true,
               elevation: 1.5,

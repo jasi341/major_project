@@ -210,7 +210,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             minimumSize: const Size(double.infinity, 45),
                             elevation: 10,
                             shadowColor: Colors.black54,
-                            backgroundColor:Colors.blue
+                            backgroundColor:Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )
                         ),
                         child:  Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -221,7 +224,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                               'Update',
                               style: GoogleFonts.robotoSerif(
                                   fontStyle: FontStyle.normal,
-                                  fontSize: 20
+                                  fontSize: 20,
+                                  color: Colors.white
                               ),
                             ),
                           ],
