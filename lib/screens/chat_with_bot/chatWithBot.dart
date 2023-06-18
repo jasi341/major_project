@@ -80,19 +80,8 @@ class _ChatWithBotState extends State<ChatWithBot> {
 
                     child: InkWell(
                       onTap: (){
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        //delay the navigation for 2 seconds
-                        Future.delayed(const Duration(seconds: 2)).then((value) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>const ChatGptScreen()
-                          )
-                          );
-
-                        }
+                        Navigator.push(context, MaterialPageRoute(builder: (_)=>const ChatGptScreen()
+                        )
                         );
                       },
                       child: SizedBox(
@@ -132,21 +121,11 @@ class _ChatWithBotState extends State<ChatWithBot> {
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
                         onTap: (){
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          //delay the navigation for 2 seconds
-                          Future.delayed(const Duration(seconds: 2)).then((value) {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_)=>const DalleScreen()
-                                )
-                            );
-
-                          });
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_)=>const DalleScreen()
+                              )
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -174,14 +153,6 @@ class _ChatWithBotState extends State<ChatWithBot> {
               ],
             ),
           ),
-          Visibility(
-            visible: _isLoading,
-            child: const SpinKitThreeBounce(
-              color: Colors.black,
-              size: 25,
-
-            ),
-          )
         ],
       ),
     );

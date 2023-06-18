@@ -10,6 +10,7 @@ import 'package:major_project/api/apis.dart';
 import 'package:major_project/data/chat_user.dart';
 import 'package:major_project/helper/dialogs.dart';
 import 'package:major_project/nav_anim/userprofile_nav_anim.dart';
+import 'package:major_project/screens/chat_with_bot/chatgpt.dart';
 import 'package:major_project/screens/update_profile_screen.dart';
 import '../color_pallete/pallete.dart';
 import '../widgets/chat_user_card.dart';
@@ -234,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                             case 2:
                               //Dialogs.showSnackbar(context,' Coming soon', Colors.grey, SnackBarBehavior.fixed, Colors.black87);
                               Navigator.push(context, MaterialPageRoute(builder: (
-                                  context) => const ChatWithBot()));
+                                  context) => const ChatGptScreen()));
                           }
                         }
                       }

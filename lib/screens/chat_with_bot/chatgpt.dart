@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:major_project/color_pallete/pallete.dart';
 import 'package:major_project/secrets.dart';
 
 import 'model.dart';
@@ -24,6 +25,7 @@ class _ChatGptScreenState extends State<ChatGptScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
+  bool isBtnClicked = true;
 
   @override
   void initState() {
@@ -63,23 +65,126 @@ class _ChatGptScreenState extends State<ChatGptScreen> {
       appBar: AppBar(
         title: BounceInRight(child: const Text('ChatGPT')),
       ),
-      backgroundColor: const Color(0xff343541),
+      backgroundColor:  const Color(0xffececec),
       body: Column(
         children: [
+          Visibility(
+            visible: isBtnClicked,
+            child: Column(
+              children: [
+                Column(
+                  children: [
+                    const Icon(Icons.sunny),
+                    const SizedBox(height: 5,),
+                     Text(
+                         'Examples',
+                          style: GoogleFonts.robotoSerif(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold),
+                     ),
+                    const SizedBox(height: 5,),
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.7,
+                      decoration: BoxDecoration(
+                        color: Pallete.firstSuggestionBoxColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: (){
+                            _textController.text = "Explain quantum computing in simple terms";
+                          },
+                          child: const Column(
+                            children: [
+                              Text("Explain quantum computing in simple terms"),
+                              Icon(Icons.arrow_forward_sharp)
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10,),
+                Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.7,
+                      decoration: BoxDecoration(
+                        color: Pallete.firstSuggestionBoxColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: InkWell(
+                        onTap: (){
+                          _textController.text = "Got any creative ideas for a 10 year old’s birthday?";
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text("Got any creative ideas for a 10 year old’s birthday?"),
+                              Icon(Icons.arrow_forward_sharp)
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10,),
+                Column(
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        _textController.text = "How do I make an HTTP request in Javascript?";
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width*0.7,
+                        decoration: BoxDecoration(
+                          color: Pallete.firstSuggestionBoxColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text("How do I make an HTTP request in Javascript?"),
+                              Icon(Icons.arrow_forward_sharp)
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10,),
           Expanded(child: _buildList()),
           Visibility(
               visible: isLoading,
               child: const SpinKitThreeBounce(
-                color: Colors.black,
+                color: Colors.black87,
                 size: 25,)
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                _buildInput(),
-                _buildSubmit()
-              ],
+          ElasticInRight(
+            delay: const Duration(milliseconds: 200),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xff343541).withGreen(50),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    _buildInput(),
+                    _buildSubmit()
+                  ],
+                ),
+              ),
             ),
           )
         ],
@@ -91,10 +196,15 @@ class _ChatGptScreenState extends State<ChatGptScreen> {
     return Expanded(
         child:TextField(
           textCapitalization: TextCapitalization.sentences,
-          style: GoogleFonts.roboto(color: Colors.white),
+          style: GoogleFonts.roboto(color: Colors.black),
           controller:_textController ,
-          decoration: InputDecoration(
-            fillColor:  const Color(0xff444654).withOpacity(0.9),
+          // ime
+          onSubmitted: (value) {
+            validate();
+          },
+          textInputAction: TextInputAction.done,
+          decoration: const InputDecoration(
+            fillColor:   Colors.white70,
             filled: true,
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -109,36 +219,14 @@ class _ChatGptScreenState extends State<ChatGptScreen> {
     return Visibility(
       visible: !isLoading,
       child: Container(
-        color: const Color(0xff444654).withOpacity(0.9),
+        color: Colors.white70,
         child: IconButton(
           icon: const Icon(
             Icons.send_rounded,
             color: Colors.white70  ,
           ),
           onPressed: () {
-            setState(() {
-              _messages.add(
-                  ChatMessage(text: _textController.text, chatMessageType: ChatMessageType.user)
-              );
-              isLoading = true;
-            });
-            var input = _textController.text;
-            _textController.clear();
-            
-            Future.delayed(const Duration(milliseconds: 50)).then((value) => _scrollDown());
-            
-            generateResponse(input).then((value) {
-              setState(() {
-                isLoading = false;
-                _messages.add(
-                    ChatMessage(text: value.trim(), chatMessageType: ChatMessageType.bot)
-                );
-              });
-              _textController.clear();
-              Future.delayed(const Duration(milliseconds: 50)).then((value) => _scrollDown());
-
-
-            } );
+           validate();
           },
         ),
       ),
@@ -167,6 +255,39 @@ class _ChatGptScreenState extends State<ChatGptScreen> {
       },
     );
   }
+
+  void validate() {
+    if(_textController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter some text'),duration: Duration(milliseconds: 800),)
+      );
+      return;
+    }
+    setState(() {
+      isBtnClicked = false;
+      _messages.add(
+          ChatMessage(text: _textController.text, chatMessageType: ChatMessageType.user)
+      );
+      isLoading = true;
+    });
+    var input = _textController.text;
+    _textController.clear();
+
+    Future.delayed(const Duration(milliseconds: 50)).then((value) => _scrollDown());
+
+    generateResponse(input).then((value) {
+      setState(() {
+        isLoading = false;
+        _messages.add(
+            ChatMessage(text: value.trim(), chatMessageType: ChatMessageType.bot)
+        );
+      });
+      _textController.clear();
+      Future.delayed(const Duration(milliseconds: 50)).then((value) => _scrollDown());
+
+
+    } );
+  }
 }
 
 class ChatMessageWidget extends StatelessWidget {
@@ -179,53 +300,59 @@ class ChatMessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        color: chatMessageType == ChatMessageType.bot ?
+         Colors.blueGrey.shade100 : Colors.blueGrey.shade200
+
+      ),
       margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
       padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-      color: chatMessageType == ChatMessageType.bot ?
-      const Color(0xff444654).withOpacity(0.9)
-          : const Color(0xff343541).withOpacity(0.9),
 
-      child: Row(
-          children: [
-            chatMessageType == ChatMessageType.bot? Container(
-              margin: const EdgeInsets.only(right: 16),
-              child: CircleAvatar(
-                backgroundColor: const Color(0xff19a07f),
-                child: Image.asset(
-                  'assets/images/openAi.png',
-                  height: 30, width: 30,
-                  color: Colors.white,
-                  scale: 1.5,
+
+      child: BounceInDown(
+        child: Row(
+            children: [
+              chatMessageType == ChatMessageType.bot? Container(
+                margin: const EdgeInsets.only(right: 16),
+                child: CircleAvatar(
+                  backgroundColor: const Color(0xff19a07f),
+                  child: Image.asset(
+                    'assets/images/openAi.png',
+                    height: 40, width: 40,
+                    color: Colors.white,
+                    scale: 1.5,
+                  ),
+                ),
+
+              ):
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                child: const CircleAvatar(
+                  child: Icon(CupertinoIcons.profile_circled,size: 40,),
                 ),
               ),
-
-            ):
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              child: const CircleAvatar(
-                child: Icon(CupertinoIcons.profile_circled),
-              ),
-            ),
-            Expanded(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
-                  child: Text(
-                    text,
-                    style: GoogleFonts.roboto(
-                      fontSize: 16,
-                      color:Colors.white,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
+              Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
+                    child: Text(
+                      text,
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        color:Colors.black87,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                )
+                  )
 
-              ],
-            ))
-          ]
+                ],
+              ))
+            ]
+        ),
       ),
     );
   }
