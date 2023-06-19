@@ -44,4 +44,22 @@ if there are some connections
 # Chatting Screen
 ![WhatsApp Image 2023-06-19 at 1 33 18 PM (1)](https://github.com/jasi341/ChatHub/assets/115690060/ecb87f38-c240-468d-8123-fbe235eaa40b)
 
+# Messages Functionality
+
+![WhatsApp Image 2023-06-19 at 1 33 18 PM (2)](https://github.com/jasi341/ChatHub/assets/115690060/66d05318-dc50-4cc3-b73c-b8603ec320ff)
+
+# Chat with bot
+
+No question
+![WhatsApp Image 2023-06-19 at 1 33 19 PM](https://github.com/jasi341/ChatHub/assets/115690060/a74eb739-dbd4-49a9-a486-d73d8b46488d)
+
+With answers
+![WhatsApp Image 2023-06-19 at 1 33 19 PM (1)](https://github.com/jasi341/ChatHub/assets/115690060/92a7329c-40d0-45c9-a154-9e7e5f2e4558)
+
+
+
+## This app also has video and voice calling feature along with notifications
+
+
+
 
