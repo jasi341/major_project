@@ -395,6 +395,7 @@ class _LoginState extends State<Login> {
           Navigator.pop(context);
           Navigator.pushReplacement(context,
               LoginNavAnim(builder: (context) =>  const HomeScreen()));
+          Navigator.popUntil(context, (route) => false);
         }
 
       }on FirebaseAuthException catch(e){

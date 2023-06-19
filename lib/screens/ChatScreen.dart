@@ -354,8 +354,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Text(
                       list.isNotEmpty ? list[0].name :
+                          widget.user.name.length>10? '${widget.user.name.substring(0,10)}...':
                       widget.user.name,
-                      style: GoogleFonts.acme(fontSize: 20,color: Colors.white),
+                      style: GoogleFonts.acme(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                     const SizedBox(height: 2,),
                     Text(
@@ -363,7 +368,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         list[0].isOnline?'Online':
                         MyDateUtils.getLastActiveTime(context: context, lastActive: list[0].lastActive)
                             :MyDateUtils.getLastActiveTime(context: context, lastActive: widget.user.lastActive),
-                        style: GoogleFonts.acme(fontSize: 13,color: Colors.white.withAlpha(210))
+                        style: GoogleFonts.acme(fontSize: 12,color: Colors.white.withAlpha(210))
                     )
                   ],
                 ),

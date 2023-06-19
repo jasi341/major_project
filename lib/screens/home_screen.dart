@@ -31,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
   List<ChatUser> _list =[];
   final List<ChatUser> _searchList =[];
   bool _isSearching = false;
+  bool isLoggedOut = false;
 
   @override
   void initState() {
@@ -68,13 +69,15 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
 
+
     return GestureDetector(
       onTap: ()=> FocusScope.of(context).unfocus(),
       child: WillPopScope(
         onWillPop: (){
-          if(_isSearching){
+          if(_isSearching || isLoggedOut){
             setState(() {
               _isSearching = !_isSearching;
+              isLoggedOut = true;
             });
             return Future.value(false);
           }else{
@@ -215,15 +218,22 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            _signOut();
-                                            Navigator.push(context, MaterialPageRoute(
-                                                builder: (
-                                                    context) => const LoginScreen()));
-                                            Dialogs.showSnackbar(
-                                                context, "Logged out successfully",
-                                                Colors.white70,
-                                                SnackBarBehavior.floating,
-                                                Colors.black);
+                                            setState(() {
+                                              isLoggedOut = true;
+                                            });
+                                            // _signOut();
+                                            Dialogs.showProgressBar(context,Colors.black ,'Logging out...');
+                                            APIs.signOut();
+
+                                            APIs.auth = FirebaseAuth.instance;
+
+                                            Future.delayed(const Duration(milliseconds: 1000), () {
+                                               Navigator.pop(context);
+                                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
+
+                                            });
+
+
                                           },
                                           child: const Text("Yes"),
                                         ),
@@ -383,23 +393,7 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
       ),
     );
   }
-  void _signOut() async {
-    Dialogs.showProgressBar(context, Colors.greenAccent, "Logging out...");
-    await APIs.updateActiveStatus(false);
-    await APIs.auth.signOut().then((value) async {
-      await GoogleSignIn().signOut().then((value) {
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pop(context);
-        APIs.auth = FirebaseAuth.instance;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-      });
 
-
-    });
-
-  }
   void _addChatUserDialog() {
     String email = '';
 

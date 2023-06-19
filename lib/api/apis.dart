@@ -351,5 +351,9 @@ class APIs {
     });
   }
 
+  static void signOut() {
+    auth.signOut();
+  }
+
 
 }
