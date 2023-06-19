@@ -80,7 +80,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
           ),
           Positioned(
-            top: 220,
+            top: 240,
             left: 20,
             right: 20,
             child: ElevatedButton(
@@ -89,13 +89,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               },
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 45),
-                  backgroundColor:const Color(0xff7B3AED)
+                  backgroundColor:const Color(0xff7B3AED),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )
               ),
               child:  Text(
                 'Send Reset Link',
                 style: GoogleFonts.robotoSerif(
                     fontStyle: FontStyle.normal,
-                    fontSize: 20
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white
                 ),
               ),
             ),
