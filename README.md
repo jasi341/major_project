@@ -12,7 +12,9 @@ A few resources to get you started if this is your first Flutter project:
 
 # Login Screen
 
-![WhatsApp Image 2023-06-19 at 1 33 17 PM](https://github.com/jasi341/ChatHub/assets/115690060/45df30d1-e9ae-4597-a552-5b96fe5e1b05)
+![WhatsApp Image 2023-06-19 at 1 33 17 PM (1)](https://github.com/jasi341/ChatHub/assets/115690060/2327d79d-4b1b-4dbe-9c74-3fec3ac65885)
+
+
 
 # Registration Screen
 
