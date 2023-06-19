@@ -1,12 +1,12 @@
 # ChatHub
 
-A chatting application
+A chatting applicationwith Material3 design 
 
 This project is made using flutter and firebase.
 
 A few resources to get you started if this is your first Flutter project:
 
-# Login//Register Screeen
+# Login/Register Screeen
 
 ![WhatsApp Image 2023-06-19 at 1 33 17 PM](https://github.com/jasi341/ChatHub/assets/115690060/c5edb7f5-8af3-42e2-855a-d7029c546dd7)
 
@@ -64,6 +64,18 @@ With answers
 
 
 ## This app also has video and voice calling feature along with notifications
+ 
+# TECH USED
+
+1)Firebase
+
+2)Image Picker
+
+3)Video Player
+
+4)Firebase cloud messaging
+etc
+
 
 
 
