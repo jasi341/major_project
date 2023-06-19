@@ -26,3 +26,22 @@ A few resources to get you started if this is your first Flutter project:
 # Profile Screen
 
 ![WhatsApp Image 2023-06-19 at 1 33 18 PM](https://github.com/jasi341/ChatHub/assets/115690060/2244d664-80e1-4155-a989-2de227462063)
+
+# Home Screen
+
+if no connection
+
+![WhatsApp Image 2023-06-19 at 1 33 18 PM](https://github.com/jasi341/ChatHub/assets/115690060/a6568a5d-8cd6-4f7e-8b6f-e075ad6235a9)
+
+if there are some connections
+
+![WhatsApp Image 2023-06-19 at 1 33 18 PM](https://github.com/jasi341/ChatHub/assets/115690060/bf40be59-1337-4346-b55f-50795ebc7d74)
+
+# Add user
+
+![WhatsApp Image 2023-06-19 at 1 33 18 PM (1)](https://github.com/jasi341/ChatHub/assets/115690060/b29110e7-4cc5-4e97-9ce4-56e3b2527bfb)
+
+# Chatting Screen
+![WhatsApp Image 2023-06-19 at 1 33 18 PM (1)](https://github.com/jasi341/ChatHub/assets/115690060/ecb87f38-c240-468d-8123-fbe235eaa40b)
+
+
