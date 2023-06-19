@@ -1,16 +1,11 @@
-# major_project
+# ChatHub
 
-A new Flutter project.
+A chatting application
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
+This project ismade using flutter and firebase.
 
 A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Login//Register Screeen
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![WhatsApp Image 2023-06-19 at 1 33 17 PM](https://github.com/jasi341/ChatHub/assets/115690060/c5edb7f5-8af3-42e2-855a-d7029c546dd7)
