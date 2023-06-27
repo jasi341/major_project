@@ -29,7 +29,7 @@ A few resources to get you started if this is your first Flutter project:
 
 # Home Screen
 
-if no connection
+In case of no connection:
 
 ![WhatsApp Image 2023-06-19 at 1 33 18 PM](https://github.com/jasi341/ChatHub/assets/115690060/a6568a5d-8cd6-4f7e-8b6f-e075ad6235a9)
 
@@ -44,7 +44,7 @@ if there are some connections
 # Chatting Screen
 ![WhatsApp Image 2023-06-19 at 1 33 18 PM (1)](https://github.com/jasi341/ChatHub/assets/115690060/ecb87f38-c240-468d-8123-fbe235eaa40b)
 
-# Messages Functionality
+# Message Functionality
 
 ![WhatsApp Image 2023-06-19 at 1 33 18 PM (2)](https://github.com/jasi341/ChatHub/assets/115690060/66d05318-dc50-4cc3-b73c-b8603ec320ff)
 
@@ -67,14 +67,13 @@ With answers
  
 # TECH USED
 
-1)Firebase
+1) Firebase
 
-2)Image Picker
+2) Image Picker
 
-3)Video Player
+3) Video Player
 
-4)Firebase cloud messaging
-etc
+4) Firebase cloud messaging, etc
 
 
 
