@@ -20,9 +20,9 @@ import 'profile_photo.dart';
 
 
 class ChatScreen extends StatefulWidget {
-  final ChatUser user ;
+  final ChatUser user;
 
-  const ChatScreen({super.key,required this.user});
+  const ChatScreen({super.key, required this.user});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -43,15 +43,15 @@ class _ChatScreenState extends State<ChatScreen> {
           statusBarColor: Color(0xFF000080),
         ),
         child: GestureDetector(
-          onTap: (){
+          onTap: () {
             setState(() {
               _showEmoji = false;
               FocusScope.of(context).unfocus();
             });
           },
           child: WillPopScope(
-            onWillPop: ()  {
-              if(_showEmoji){
+            onWillPop: () {
+              if (_showEmoji) {
                 setState(() {
                   _showEmoji = !_showEmoji;
                 });
@@ -71,35 +71,37 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: StreamBuilder(
                         stream: APIs.getAllMessages(widget.user),
-                        builder: (context,snapshot){
-                          switch(snapshot.connectionState){
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
                             case ConnectionState.waiting:
                             case ConnectionState.none:
                               return const SizedBox();
                             case ConnectionState.active:
                             case ConnectionState.done:
                               final data = snapshot.data?.docs;
-                              _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
-                              if(_list.isNotEmpty){
+                              _list = data?.map((e) =>
+                                  Message.fromJson(e.data())).toList() ?? [];
+                              if (_list.isNotEmpty) {
                                 return ListView.builder(
                                   reverse: true,
 
                                   itemCount: _list.length,
                                   physics: const BouncingScrollPhysics(),
-                                  itemBuilder: (context,index){
-                                    return   MessageCard(message: _list[index]);
+                                  itemBuilder: (context, index) {
+                                    return MessageCard(message: _list[index]);
                                   },
                                 );
-
-                              }else{
-                                return  GestureDetector(
-                                  onTap: (){
+                              } else {
+                                return GestureDetector(
+                                  onTap: () {
                                     _textController.text = 'Hi';
                                   },
                                   child: Center(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .center,
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .center,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           LottieBuilder.asset(
@@ -109,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                             fit: BoxFit.cover,
 
                                           ),
-                                          const SizedBox(height:10),
+                                          const SizedBox(height: 10),
                                         ],
                                       )
                                   ),
@@ -121,7 +123,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   if(_isUploading)
                     const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 16),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: CircularProgressIndicator(strokeWidth: 2,)
@@ -156,13 +159,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _appBar() {
     return InkWell(
-      onTap: (){
-
+      onTap: () {
         showDialog(context: context,
             barrierDismissible: false,
 
             barrierColor: Colors.black.withOpacity(0.5),
-            builder: (context){
+            builder: (context) {
               return AlertDialog(
                 elevation: 5,
                 shadowColor: Colors.black,
@@ -180,15 +182,18 @@ class _ChatScreenState extends State<ChatScreen> {
                           right: 5,
                           top: 5,
                           child: GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.pop(context);
                               },
-                              child: const Icon(Icons.cancel,color:Color(0xFFD3D3D3),size: 30,)),
+                              child: const Icon(
+                                Icons.cancel, color: Color(0xFFD3D3D3),
+                                size: 30,)),
                           // child: IconButton(
 
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0,vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0, vertical: 8),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -197,24 +202,39 @@ class _ChatScreenState extends State<ChatScreen> {
 
                               Center(
                                 child: GestureDetector(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePhotoScreen(profilePic: widget.user.image,)
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProfilePhotoScreen(
+                                              profilePic: widget.user.image,)
                                     )
                                     );
-
                                   },
                                   child: CircleAvatar(
-                                    maxRadius: MediaQuery.of(context).size.width*0.25,
+                                    maxRadius: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width * 0.25,
                                     child: ClipOval(
                                       child: CachedNetworkImage(
-                                        height: MediaQuery.of(context).size.width*0.5,
-                                        width: MediaQuery.of(context).size.width*0.5,
+                                        height: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width * 0.5,
+                                        width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width * 0.5,
                                         imageUrl: widget.user.image,
                                         fit: BoxFit.fill,
-                                        placeholder: (context, url) => const CircularProgressIndicator(color: Colors.green),
-                                        errorWidget: (context, url, error) =>  CircleAvatar(
-                                          child: Image.asset('assets/images/profile.png'),
-                                        ),
+                                        placeholder: (context, url) =>
+                                        const CircularProgressIndicator(
+                                            color: Colors.green),
+                                        errorWidget: (context, url, error) =>
+                                            CircleAvatar(
+                                              child: Image.asset(
+                                                  'assets/images/profile.png'),
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -259,9 +279,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
                                   Flexible(
                                     child: GestureDetector(
-                                      onTap: (){
-                                        Clipboard.setData(ClipboardData(text: widget.user.email));
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Email copied to clipboard')));
+                                      onTap: () {
+                                        Clipboard.setData(ClipboardData(
+                                            text: widget.user.email));
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                'Email copied to clipboard')));
                                       },
                                       child: Text(
                                         widget.user.email,
@@ -293,7 +317,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                     ),
                                   ),
                                   Text(
-                                    MyDateUtils.getLastMessageTime(context: context, time: widget.user.createdAt,showYear: true),
+                                    MyDateUtils.getLastMessageTime(
+                                        context: context,
+                                        time: widget.user.createdAt,
+                                        showYear: true),
                                     style: GoogleFonts.roboto(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -316,12 +343,12 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       },
       child: StreamBuilder(
-        stream:APIs.getUserInfo(widget.user),
-        builder: (context,snapshot){
-
+        stream: APIs.getUserInfo(widget.user),
+        builder: (context, snapshot) {
           final data = snapshot.data?.docs;
-          final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-          return Container(color:const Color(0xFF000080) ,
+          final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+              [];
+          return Container(color: const Color(0xFF000080),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -329,7 +356,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.arrow_back, color: Colors.white), ),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),),
                 CircleAvatar(
                   radius: 19,
                   child: ClipOval(
@@ -337,12 +364,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       width: 90,
                       height: 90,
                       child: CachedNetworkImage(
-                        imageUrl: list.isNotEmpty ? list[0].image : widget.user.image,
+                        imageUrl: list.isNotEmpty ? list[0].image : widget.user
+                            .image,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => const CircularProgressIndicator(color: Colors.yellow),
-                        errorWidget: (context, url, error) =>  CircleAvatar(
-                          child: Image.asset('assets/images/profile.png'),
-                        ),
+                        placeholder: (context, url) =>
+                        const CircularProgressIndicator(color: Colors.yellow),
+                        errorWidget: (context, url, error) =>
+                            CircleAvatar(
+                              child: Image.asset('assets/images/profile.png'),
+                            ),
                       ),
                     ),
                   ),
@@ -354,7 +384,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Text(
                       list.isNotEmpty ? list[0].name :
-                          widget.user.name.length>10? '${widget.user.name.substring(0,10)}...':
+                      widget.user.name.length > 10 ? '${widget.user.name
+                          .substring(0, 10)}...' :
                       widget.user.name,
                       style: GoogleFonts.acme(
                           fontSize: 14,
@@ -365,10 +396,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     const SizedBox(height: 2,),
                     Text(
                         list.isNotEmpty ?
-                        list[0].isOnline?'Online':
-                        MyDateUtils.getLastActiveTime(context: context, lastActive: list[0].lastActive)
-                            :MyDateUtils.getLastActiveTime(context: context, lastActive: widget.user.lastActive),
-                        style: GoogleFonts.acme(fontSize: 12,color: Colors.white.withAlpha(210))
+                        list[0].isOnline ? 'Online' :
+                        MyDateUtils.getLastActiveTime(
+                            context: context, lastActive: list[0].lastActive)
+                            : MyDateUtils.getLastActiveTime(context: context,
+                            lastActive: widget.user.lastActive),
+                        style: GoogleFonts.acme(
+                            fontSize: 12, color: Colors.white.withAlpha(210))
                     )
                   ],
                 ),
@@ -377,74 +411,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   padding: const EdgeInsets.only(right: 10.0),
                   child: Align(
                       alignment: Alignment.centerRight,
-                      child:Row(
-                        children:[
+                      child: Row(
+                        children: [
                           InkWell(
                               splashColor: Colors.white70,
-                              onTap: (){
+                              onTap: () {
                                 log("uid : ${widget.user.id}");
                                 showDialog(
                                     context: context,
-                                    builder: (context){
-                                  return AlertDialog(
-                                    title :Text(
-                                        "Are you sure you want to Video Call this user?",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(onPressed: (){
-                                        Navigator.pop(context);
-                                      },
-                                          child: Text(
-                                              "No",
-                                            style: GoogleFonts.roboto(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.red,
-                                              )
-                                          )),
-                                      TextButton(onPressed: (){
-                                        Navigator.pop(context);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context)=> VideoCall(user: widget.user, toId:_list.first.toId, isVideo: true,))
-                                        );
-                                      },
-                                          child:Text(
-                                              "Yes",
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.blue,
-                                            )
-                                          )
-                                      ),
-                                    ],
-                                  );
-                                }
-                                );
-
-                              },
-                              child: const Icon(
-                                  Icons.video_camera_back_outlined,
-                                  color: Colors.white,
-
-                              )
-                          ),
-                          const SizedBox(width: 15,),
-                          InkWell(
-                              onTap: (){
-                                log("uid : ${widget.user.id}");
-                                showDialog(
-                                    context: context,
-                                    builder: (context){
+                                    builder: (context) {
                                       return AlertDialog(
-                                        title :Text(
-                                          "Are you sure you want to Voice Call this user?",
+                                        title: Text(
+                                          "Are you sure you want to Video Call this user?",
                                           style: GoogleFonts.roboto(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w600,
@@ -452,7 +430,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                           ),
                                         ),
                                         actions: [
-                                          TextButton(onPressed: (){
+                                          TextButton(onPressed: () {
                                             Navigator.pop(context);
                                           },
                                               child: Text(
@@ -463,13 +441,80 @@ class _ChatScreenState extends State<ChatScreen> {
                                                     color: Colors.red,
                                                   )
                                               )),
-                                          TextButton(onPressed: (){
+                                          TextButton(onPressed: () {
                                             Navigator.pop(context);
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder: (context)=> VideoCall(user: widget.user, toId:_list.first.toId,isVideo: false))
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        VideoCall(
+                                                          user: widget.user,
+                                                          toId: _list.first
+                                                              .toId,
+                                                          isVideo: true,))
                                             );
                                           },
-                                              child:Text(
+                                              child: Text(
+                                                  "Yes",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.blue,
+                                                  )
+                                              )
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                );
+                              },
+                              child: const Icon(
+                                Icons.video_camera_back_outlined,
+                                color: Colors.white,
+
+                              )
+                          ),
+                          const SizedBox(width: 15,),
+                          InkWell(
+                              onTap: () {
+                                log("uid : ${widget.user.id}");
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                          "Are you sure you want to Voice Call this user?",
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                              child: Text(
+                                                  "No",
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.red,
+                                                  )
+                                              )),
+                                          TextButton(onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        VideoCall(
+                                                            user: widget.user,
+                                                            toId: _list.first
+                                                                .toId,
+                                                            isVideo: false))
+                                            );
+                                          },
+                                              child: Text(
                                                   "Yes",
                                                   style: GoogleFonts.roboto(
                                                     fontSize: 16,
@@ -480,11 +525,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                         ],
                                       );
                                     });
-
                               },
                               child: const Icon(
-                                  Icons.call,
-                                  color: Colors.white,
+                                Icons.call,
+                                color: Colors.white,
 
                               )
                           ),
@@ -501,7 +545,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _chatInput(){
+  Widget _chatInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3.0),
       child: Row(
@@ -523,12 +567,12 @@ class _ChatScreenState extends State<ChatScreen> {
                         _showEmoji = !_showEmoji;
                       });
                     },
-                    icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.blue),
+                    icon: const Icon(
+                        Icons.emoji_emotions_outlined, color: Colors.blue),
                   ),
                   Expanded(
                       child: TextField(
-                        onTap: (){
-
+                        onTap: () {
                           setState(() {
                             _showEmoji = false;
                           });
@@ -537,12 +581,12 @@ class _ChatScreenState extends State<ChatScreen> {
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         style: GoogleFonts.robotoSerif(
-                            color: Colors.black87 ,
+                            color: Colors.black87,
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             fontStyle: FontStyle.normal
                         ),
-                        onSubmitted: (value){
+                        onSubmitted: (value) {
                           validateAndSend();
                         },
                         textInputAction: TextInputAction.done,
@@ -558,27 +602,31 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       )),
                   IconButton(
-                    onPressed: (){
+                    onPressed: () {
                       _showBottomSheet();
                     },
-                    icon:  const Icon(CupertinoIcons.paperclip, color: Colors.blue,size: 25),
+                    icon: const Icon(
+                        CupertinoIcons.paperclip, color: Colors.blue, size: 25),
                   ),
                   IconButton(
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
-                      final XFile? image = await picker.pickImage(source: ImageSource.camera,imageQuality: 70);
-                      if(image!= null){
+                      final XFile? image = await picker.pickImage(
+                          source: ImageSource.camera, imageQuality: 70);
+                      if (image != null) {
                         setState(() {
                           _isUploading = true;
                         });
-                        await APIs.sendChatImage(widget.user,File(image.path));
+                        await APIs.sendChatImage(widget.user, File(image.path));
                         setState(() {
                           _isUploading = false;
                         });
                       }
                     },
 
-                    icon:  const Icon(CupertinoIcons.camera_fill, color: Colors.blue,size: 25),
+                    icon: const Icon(
+                        CupertinoIcons.camera_fill, color: Colors.blue,
+                        size: 25),
                   ),
                 ],
               ),
@@ -592,13 +640,14 @@ class _ChatScreenState extends State<ChatScreen> {
               elevation: 2,
               splashColor: Colors.blueGrey,
               padding: const EdgeInsets.all(10),
-              onPressed: (){
+              onPressed: () {
                 validateAndSend();
               },
               shape: const CircleBorder(),
               minWidth: 5,
               color: Colors.green,
-              child: const Center(child: Icon(Icons.send_sharp,size: 25,color: Colors.white,)),
+              child: const Center(child: Icon(
+                Icons.send_sharp, size: 25, color: Colors.white,)),
             ),
           )
         ],
@@ -607,15 +656,14 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void validateAndSend() {
-    if(_textController.text.isNotEmpty){
-      if(_list.isEmpty){
+    if (_textController.text.isNotEmpty) {
+      if (_list.isEmpty) {
         APIs.sendFirstMessage(
             widget.user,
             _textController.text,
             Type.text
         );
         _textController.clear();
-
       }
       else {
         APIs.sendMessage(
@@ -627,7 +675,7 @@ class _ChatScreenState extends State<ChatScreen> {
         _textController.clear();
       }
     }
-    else{
+    else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please Enter Some Text !'),
@@ -645,27 +693,32 @@ class _ChatScreenState extends State<ChatScreen> {
     showModalBottomSheet(
         context: context,
         isDismissible: false,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))),
-        builder: (_){
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+        builder: (_) {
           return SizedBox(
-              height: MediaQuery.of(context).size.height*0.32,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.32,
               child: Stack(
                 children: [
                   const SizedBox(height: 10,),
                   Positioned(
                       right: 10,
                       top: 5,
-                      child:  GestureDetector(
-                        onTap: (){
+                      child: GestureDetector(
+                        onTap: () {
                           Navigator.pop(context);
                         },
-                        child:  Padding(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
                               const Icon(Icons.cancel, color: Colors.grey,),
-                              const SizedBox(width:2,),
-                              Text('Close',style: GoogleFonts.acme(fontSize: 17,color: Colors.grey),)
+                              const SizedBox(width: 2,),
+                              Text('Close', style: GoogleFonts.acme(
+                                  fontSize: 17, color: Colors.grey),)
                             ],
                           ),
                         ),
@@ -678,8 +731,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         color: Colors.grey,
                         thickness: 5,
                         height: 3,
-                        endIndent: MediaQuery.of(context).size.width*.42,
-                        indent:  MediaQuery.of(context).size.width*.42,),
+                        endIndent: MediaQuery
+                            .of(context)
+                            .size
+                            .width * .42,
+                        indent: MediaQuery
+                            .of(context)
+                            .size
+                            .width * .42,),
                       const SizedBox(height: 30,),
                       Center(
                           child: Text(
@@ -699,7 +758,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           //for gallery
                           Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+                              borderRadius: BorderRadius.circular(
+                                  10.0), // Adjust the radius as needed
                             ),
                             color: Colors.white70,
                             elevation: 25,
@@ -707,35 +767,39 @@ class _ChatScreenState extends State<ChatScreen> {
                             child: InkWell(
                               onTap: () async {
                                 final ImagePicker picker = ImagePicker();
-                                final List<XFile> images = await picker.pickMultiImage(imageQuality: 70);
+                                final List<XFile> images = await picker
+                                    .pickMultiImage(imageQuality: 70);
 
                                 setState(() {
                                   _isUploading = true;
                                 });
-                                if(mounted) {
+                                if (mounted) {
                                   Navigator.pop(context);
                                 }
-                                for(var i in images){
-                                  await APIs.sendChatImage(widget.user,File(i.path)
+                                for (var i in images) {
+                                  await APIs.sendChatImage(
+                                      widget.user, File(i.path)
                                   );
                                 }
                                 setState(() {
                                   _isUploading = false;
                                 });
-
-
                               },
                               splashColor: Colors.tealAccent,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 10),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Image.asset('assets/images/gallery.png',width: 60,height: 60,),
-                                    const SizedBox(height:5),
-                                    Text('Photo',style: GoogleFonts.acme(fontSize: 22,),),
+                                    Image.asset(
+                                      'assets/images/gallery.png', width: 60,
+                                      height: 60,),
+                                    const SizedBox(height: 5),
+                                    Text('Photo',
+                                      style: GoogleFonts.acme(fontSize: 22,),),
                                   ],
                                 ),
                               ),
@@ -746,7 +810,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           //for video
                           Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+                              borderRadius: BorderRadius.circular(
+                                  10.0), // Adjust the radius as needed
                             ),
                             color: Colors.white,
                             elevation: 25,
@@ -754,16 +819,18 @@ class _ChatScreenState extends State<ChatScreen> {
                             child: InkWell(
                               onTap: () async {
                                 final ImagePicker picker = ImagePicker();
-                                final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
+                                final XFile? video = await picker.pickVideo(
+                                    source: ImageSource.gallery);
 
-                                if(mounted) {
+                                if (mounted) {
                                   Navigator.pop(context);
                                 }
-                                if(video!= null){
+                                if (video != null) {
                                   setState(() {
                                     _isUploading = true;
                                   });
-                                  await APIs.sendChatVideo(widget.user,File(video.path));
+                                  await APIs.sendChatVideo(
+                                      widget.user, File(video.path));
                                   setState(() {
                                     _isUploading = false;
                                   });
@@ -772,15 +839,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
                               splashColor: Colors.tealAccent,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 10),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Image.asset('assets/images/video.png',width: 60,height: 60,),
-                                    const SizedBox(height:5),
-                                    Text('Video',style: GoogleFonts.acme(fontSize: 22,),),
+                                    Image.asset(
+                                      'assets/images/video.png', width: 60,
+                                      height: 60,),
+                                    const SizedBox(height: 5),
+                                    Text('Video',
+                                      style: GoogleFonts.acme(fontSize: 22,),),
                                   ],
                                 ),
                               ),
@@ -795,7 +866,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ));
         });
-
   }
 
 
